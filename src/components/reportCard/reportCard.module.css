@@ -1,0 +1,105 @@
+/* reportCard.module.css */
+.reportCard {
+    padding: 20px;
+    border-radius: 8px;
+    /* Slightly more rounded corners for a modern look */
+    background-color: var(--softBg);
+    margin-bottom: 20px;
+    border: 1px solid var(--borderColor);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* Slightly stronger shadow for better depth */
+}
+
+.reportCard h2 {
+    margin-top: 0;
+    font-size: 1.6em;
+    /* Increased font size for the title */
+    color: var(--titleColor);
+    font-weight: bold;
+    /* Bold title for better emphasis */
+}
+
+.reportCard p {
+    margin: 10px 0;
+    font-size: 1.1em;
+    /* Slightly larger font size for better readability */
+    color: var(--textColor);
+}
+
+/* Styles for report options */
+.option {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    /* Slightly increased margin for better spacing */
+    font-size: 1em;
+    color: var(--textColor);
+    padding: 5px 0;
+    /* Padding for better click area and readability */
+}
+
+.arrow {
+    font-size: 18px;
+    /* Larger arrow for better visibility */
+    color: var(--iconColor);
+    margin-right: 12px;
+    /* Increased space between the arrow and text */
+}
+
+/* Hover effect for options */
+.option:hover {
+    background-color: var(--hoverBg);
+    border-radius: 5px;
+    /* Adjusted border radius for hover effect */
+    cursor: pointer;
+}
+
+/* Styles for additional reports section */
+.additionalReports {
+    margin-top: 20px;
+    border-top: 2px solid var(--borderColor);
+    /* Border color for top border */
+    padding-top: 10px;
+    /* Space above the additional reports section */
+}
+
+.additionalReports h3 {
+    font-size: 1.4em;
+    /* Font size for section header */
+    color: var(--textColor);
+    /* Color for header */
+    margin-top: 0;
+    /* No top margin */
+}
+
+.additionalReport {
+    border-bottom: 1px solid var(--borderColor);
+    /* Border color for bottom border */
+}
+
+.additionalReport:last-child {
+    border-bottom: none;
+    /* No border for the last item */
+}
+
+.additionalReport:first-child {
+    margin-top: 10px;
+    /* No border for the last item */
+}
+
+.commentContainer {
+    border: 2px solid var(--bg);
+    /* Border color for the comment section */
+    border-radius: 5px;
+    /* Rounded corners for the border */
+    padding: 10px;
+    /* Padding inside the comment container */
+    margin-bottom: 20px;
+    /* Space below the comment section */
+    height: 147px;
+    /* Fixed height for the comment section */
+    overflow-y: hidden;
+    /* Adds scrollbar if content exceeds the height */
+    background-color: var(--bg);
+    /* Background color inside the comment section */
+}
