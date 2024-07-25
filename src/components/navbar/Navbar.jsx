@@ -18,7 +18,7 @@ const Navbar = () => {
                 <ThemeToggle />
                 <Link href="/contact" className={styles.link}>Contact</Link>
                 <Link href="/about" className={styles.link}>About</Link>
-                <Suspense fallback={<></>}
+                <Suspense fallback={<></>}>
                    <AuthLinks />
                 </Suspense>
             </div>
