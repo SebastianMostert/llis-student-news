@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import ReactQuill from "react-quill";
+import dynamic from "next/dynamic"; // Import dynamic from next/dynamic
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import {
@@ -16,6 +16,8 @@ import { app } from "@/utils/firebase";
 import { getBaseUrl } from "@/utils/config";
 import styles from "./writePage.module.css";
 import "react-quill/dist/quill.bubble.css";
+
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false }); // Dynamically import ReactQuill with no SSR
 
 const getUser = async () => {
     const res = await fetch('/api/user/', { cache: "no-store" });
@@ -67,6 +69,8 @@ const WritePage = () => {
     }, [router]);
 
     useEffect(() => {
+        if (!file) return;
+
         const storage = getStorage(app);
 
         const isImageOrVideoFile = (file) => {
@@ -101,7 +105,7 @@ const WritePage = () => {
             );
         };
 
-        if (file) uploadFile();
+        uploadFile();
     }, [file]);
 
     const isWriter = useMemo(() => user?.roles.includes('writer') || user?.roles.includes('admin'), [user]);
