@@ -1,4 +1,4 @@
-import React from "react";
+import React, {Suspense} from "react";
 import styles from "./navbar.module.css";
 import Image from "next/image";
 import Link from "next/link";
@@ -18,7 +18,9 @@ const Navbar = () => {
                 <ThemeToggle />
                 <Link href="/contact" className={styles.link}>Contact</Link>
                 <Link href="/about" className={styles.link}>About</Link>
-                <AuthLinks />
+                <Suspense fallback={<></>}
+                   <AuthLinks />
+                </Suspense>
             </div>
         </div>
     );
