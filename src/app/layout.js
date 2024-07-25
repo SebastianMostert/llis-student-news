@@ -27,9 +27,7 @@ export default function RootLayout({ children }) {
                     <Navbar />
                   </Suspense>
                   {children}
-Suspense fallback={<div>Loading footer...</div>}>
                   <Footer />
-</Suspense>
                 </div>
               </div>
             </ThemeProvider>
