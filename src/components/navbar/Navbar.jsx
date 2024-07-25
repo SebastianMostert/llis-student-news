@@ -15,7 +15,9 @@ const Navbar = () => {
             </div>
             <Link href="/" className={styles.logo}>LLIS - Student News</Link>
             <div className={styles.links}>
+<Suspense fallback={<></>}>
                 <ThemeToggle />
+</Suspense>
                 <Link href="/contact" className={styles.link}>Contact</Link>
                 <Link href="/about" className={styles.link}>About</Link>
                 <Suspense fallback={<></>}>
