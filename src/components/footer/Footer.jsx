@@ -1,24 +1,32 @@
-import React from 'react'
-import styles from './footer.module.css'
-import Image from 'next/image'
-import Link from 'next/link'
+import React, { useEffect, useState } from 'react';
+import styles from './footer.module.css';
+import Image from 'next/image';
+import Link from 'next/link';
 import { getBaseUrl } from "@/utils/config";
 
-const getData = async () => {
-    const res = await fetch(`${getBaseUrl()}/api/categories`, {
-        cache: "no-store",
-    });
+const Footer = () => {
+    const [categories, setCategories] = useState([]);
 
-    if (!res.ok) {
-        throw new Error("Failed");
-    }
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const res = await fetch(`${getBaseUrl()}/api/categories`, {
+                    cache: "no-store",
+                });
 
-    return res.json();
-};
+                if (!res.ok) {
+                    throw new Error("Failed to fetch categories");
+                }
 
-const Footer = async () => {
+                const data = await res.json();
+                setCategories(data);
+            } catch (error) {
+                console.error("Error fetching categories:", error);
+            }
+        };
 
-    const categories = await getData();
+        fetchData();
+    }, []);
 
     return (
         <div className={styles.container}>
@@ -60,7 +68,7 @@ const Footer = async () => {
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};
 
-export default Footer
+export default Footer;
