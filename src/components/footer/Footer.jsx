@@ -12,7 +12,7 @@ const Footer = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const res = await fetch(`${getBaseUrl()}/api/categories`, {
+                const res = await fetch('/api/categories', {
                     cache: "no-store",
                 });
 

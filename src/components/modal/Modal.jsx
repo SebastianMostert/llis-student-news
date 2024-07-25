@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useEffect, useRef } from 'react';
 import styles from './modal.module.css';
 import Comment from '../Comment/Comment';
@@ -75,45 +77,36 @@ const STEPS = {
 const Modal = ({ isOpen, onClose, onReport, comment }) => {
     const [currentStep, setCurrentStep] = useState(STEPS.OPTIONS);
     const [selectedOptions, setSelectedOptions] = useState([]);
-    const [options, setOptions] = useState(OPTIONS_DATA["Report comment"]);
+    const [options, setOptions] = useState(() => OPTIONS_DATA["Report comment"]);
     const [history, setHistory] = useState([]);
     const modalRef = useRef(null);
-
-    useEffect(() => {
-        if (isOpen) {
-            document.body.style.overflow = 'hidden';
-        } else {
-            document.body.style.overflow = '';
-        }
-        return () => {
-            document.body.style.overflow = '';
-        };
-    }, [isOpen]);
-
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (modalRef.current && !modalRef.current.contains(event.target)) {
-                onClose();
-                resetModalState();
-            }
-        };
-
-        if (isOpen) {
-            document.addEventListener('mousedown', handleClickOutside);
-        } else {
-            document.removeEventListener('mousedown', handleClickOutside);
-        }
-
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, [isOpen]);
 
     const resetModalState = () => {
         setCurrentStep(STEPS.OPTIONS);
         setSelectedOptions([]);
         setOptions(OPTIONS_DATA["Report comment"]);
         setHistory([]);
+    };
+
+    useEffect(() => {
+        if (isOpen) {
+            document.body.style.overflow = 'hidden';
+            document.addEventListener('mousedown', handleClickOutside);
+        } else {
+            document.body.style.overflow = '';
+            document.removeEventListener('mousedown', handleClickOutside);
+        }
+        return () => {
+            document.body.style.overflow = '';
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [isOpen]);
+
+    const handleClickOutside = (event) => {
+        if (modalRef.current && !modalRef.current.contains(event.target)) {
+            onClose();
+            resetModalState();
+        }
     };
 
     const handleOptionClick = (option) => {
@@ -130,8 +123,9 @@ const Modal = ({ isOpen, onClose, onReport, comment }) => {
     };
 
     const handleBack = () => {
-        if (history.length > 0) {
-            const { options: prevOptions, step: prevStep } = history.pop();
+        const lastState = history.pop();
+        if (lastState) {
+            const { options: prevOptions, step: prevStep } = lastState;
             setOptions(prevOptions);
             setCurrentStep(prevStep);
             setSelectedOptions(prev => prev.slice(0, -1));
@@ -178,23 +172,17 @@ const Modal = ({ isOpen, onClose, onReport, comment }) => {
 
         return (
             <div className={styles.contentContainer}>
-
+                {titles[currentStep]}
+                {descriptions[currentStep]}
                 {currentStep !== STEPS.SUMMARY ? (
                     <>
-                        {titles[currentStep]}
-                        {descriptions[currentStep]}
                         <div className={styles.commentWrapper}>
                             <Comment item={comment} hasModButtons={false} hasEngagementButtons={false} />
                         </div>
-                        <div className={styles.optionsContainer}>
-                            {renderOptions()}
-                        </div>
+                        {renderOptions()}
                     </>
-
                 ) : (
                     <>
-                        {titles[currentStep]}
-                        {descriptions[currentStep]}
                         <div className={styles.summary}>
                             <h3 className={styles.summaryTitle}>Report Category</h3>
                             <p className={styles.summaryText}>{selectedOptions.join(' -> ')}</p>
@@ -207,7 +195,6 @@ const Modal = ({ isOpen, onClose, onReport, comment }) => {
                 )}
             </div>
         );
-
     };
 
     if (!isOpen) return null;
@@ -245,5 +232,6 @@ const Modal = ({ isOpen, onClose, onReport, comment }) => {
         </div>
     );
 };
+
 
 export default Modal;

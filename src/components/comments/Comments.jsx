@@ -39,8 +39,10 @@ const Comments = ({ postSlug }) => {
 
     useEffect(() => {
         getUser().then(({ data, authenticated }) => {
-            if (!authenticated) return;
-            setUser(data);
+            if (authenticated) {
+                setUser(data);
+                setLoading(false);
+            }
             setLoading(false);
         })
     }, [user]);
@@ -93,7 +95,16 @@ const Comments = ({ postSlug }) => {
                 {isLoading
                     ? null
                     : data?.map((item) => (
-                        <Comment hasModButtons={true} hasEngagementButtons={true} mutate={mutate} item={item} key={item.id} isLoggedIn={isLoggedIn} user={user ? user : userData.user} />
+                        <Comment
+                            hasModButtons={true}
+                            hasEngagementButtons={true}
+                            mutate={mutate}
+                            item={item}
+                            key={item.id}
+                            isLoggedIn={isLoggedIn}
+                            /* User may be null */
+                            user={user}
+                        />
                     ))}
             </div>
         </div>

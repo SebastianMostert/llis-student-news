@@ -41,7 +41,6 @@ const SinglePage = async ({ params }) => {
         </div>
         {data?.img && (
           <div className={styles.imageContainer}>
-            {/* <Image src={data.img} alt="" fill className={styles.image} /> */}
             <MediaDisplay src={data?.img} />
           </div>
         )}
