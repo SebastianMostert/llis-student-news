@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useMemo, useCallback } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import dynamic from "next/dynamic"; // Import dynamic from next/dynamic
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
@@ -13,7 +12,6 @@ import {
     getDownloadURL,
 } from "firebase/storage";
 import { app } from "@/utils/firebase";
-import { getBaseUrl } from "@/utils/config";
 import styles from "./writePage.module.css";
 import "react-quill/dist/quill.bubble.css";
 
@@ -57,6 +55,12 @@ const WritePage = () => {
                 const { userData, categoriesData } = await getData();
                 if (!userData.authenticated) router.push("/");
                 setCategories(categoriesData);
+
+                // Set a default category
+                if (categoriesData.length > 0) {
+                    setCatSlug(categoriesData[0].slug);
+                }
+
                 setUser(userData.data);
             } catch (error) {
                 console.error('Failed to fetch data:', error);
@@ -127,6 +131,11 @@ const WritePage = () => {
             return;
         }
 
+        if (!catSlug) {
+            alert("Please select a category");
+            return;
+        }
+
         const res = await fetch("/api/posts", {
             method: "POST",
             body: JSON.stringify({
@@ -134,7 +143,7 @@ const WritePage = () => {
                 desc: value,
                 img: media,
                 slug: slugify(title),
-                catSlug: catSlug || "style", // Default category if not selected
+                catSlug,
             }),
         });
 
@@ -147,6 +156,14 @@ const WritePage = () => {
     if (loading) return null;
     if (!isWriter) router.push("/");
 
+    const toolbarOptions = [
+        [{ header: [1, 2, 3, 4, 5, 6, false] }],
+        ["bold", "italic", "underline", "strike"],
+        [{ list: "ordered" }, { list: "bullet" }],
+        ["link", "image"],
+        ["clean"],
+    ];
+
     return (
         <div className={styles.container}>
             <input
@@ -155,7 +172,7 @@ const WritePage = () => {
                 className={styles.input}
                 onChange={handleTitleChange}
             />
-            <select className={styles.select} onChange={handleCategoryChange}>
+            <select className={styles.select} onChange={handleCategoryChange} value={catSlug}>
                 {categories.map((category) => (
                     <option key={category.slug} value={category.slug}>
                         {category.title}
@@ -192,6 +209,9 @@ const WritePage = () => {
                     value={value}
                     onChange={setValue}
                     placeholder="Tell your story..."
+                    modules={{
+                        toolbar: toolbarOptions,
+                    }}
                 />
             </div>
             <button className={styles.publish} onClick={handleSubmit}>
