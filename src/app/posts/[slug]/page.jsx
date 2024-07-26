@@ -22,6 +22,7 @@ const SinglePage = async ({ params }) => {
   const { slug } = params;
 
   const data = await getData(slug);
+
   return (
     <div className={styles.container}>
       <div className={styles.infoContainer}>
@@ -42,6 +43,7 @@ const SinglePage = async ({ params }) => {
         {data?.img && (
           <div className={styles.imageContainer}>
             <MediaDisplay src={data?.img} />
+            {/* <Image src={data.img} alt="" fill className={styles.image} /> */}
           </div>
         )}
       </div>

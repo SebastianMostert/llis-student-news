@@ -35,15 +35,15 @@ const MediaDisplay = ({ src }) => {
   if (type === "image") {
     // For images
     mediaContent = (
-      <div className={styles.mediaWrapper}>
-        <Image src={src} alt="Uploaded media" className={styles.media} fill />
+      <div className={styles.imageContainer}>
+        <Image src={src} alt="" fill className={styles.image} />
       </div>
     );
   } else if (type === "video") {
     // For videos
     mediaContent = (
       <div className={styles.mediaWrapper}>
-        <video controls className={styles.media}>
+        <video controls className={styles.videoElement}>
           <source src={src} type="video/mp4" />
           {/* Add more <source> tags for different video formats if needed */}
           Your browser does not support the video tag.
