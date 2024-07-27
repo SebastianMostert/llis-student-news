@@ -18,6 +18,11 @@ const getData = async (slug) => {
   return res.json();
 };
 
+export const metadata = {
+  title: "Test title",
+  description: 'Test description',
+}
+
 const SinglePage = async ({ params }) => {
   const { slug } = params;
 
