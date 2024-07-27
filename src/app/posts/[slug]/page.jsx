@@ -18,9 +18,29 @@ const getData = async (slug) => {
   return res.json();
 };
 
-export const metadata = {
-  title: "Test title",
-  description: 'Test description',
+export async function generateMetadata({ params }, parent) {
+  // read route params
+  const { slug } = params;
+
+  // fetch data
+  const data = await getData(slug)
+
+  // optionally access and extend (rather than replace) parent metadata
+  const images = [data?.img] || []
+
+  const desc = data.desc;
+
+  // Remove HTML tags from the description
+  let cleanDesc = desc.replace(/(<([^>]+)>)/gi, "");
+  cleanDesc = cleanDesc.substring(0, 60) + "...";
+
+  return {
+    title: data.title,
+    description: cleanDesc,
+    openGraph: {
+      images,
+    },
+  }
 }
 
 const SinglePage = async ({ params }) => {
