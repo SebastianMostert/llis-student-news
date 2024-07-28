@@ -8,3 +8,9 @@ export const Permissions = {
     ManageReports: 'manage reports',
     Administrator: 'administrator',
 }
+
+export const titleText = (
+    <>
+        <b>This is the title!</b> You can add a small description here.
+    </>
+)

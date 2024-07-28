@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { getBaseUrl } from '@/utils/config';
 import Link from 'next/link';
 import descToHtml from '@/utils/descToHtml';
+import { titleText } from '@/utils/constant';
 
 const getData = async () => {
     const res = await fetch(`${getBaseUrl()}/api/posts?featured=true`, {
@@ -23,7 +24,7 @@ const Featured = async () => {
     return (
         <div className={styles.container}>
             <h1 className={styles.title}>
-                <b>Hey, bla bla here!</b> Discover bla bla bla bla and bla.
+                {titleText}
             </h1>
             {posts?.map(post => (
                 <div className={styles.post} key={post._id}>
