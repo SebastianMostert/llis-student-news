@@ -5,8 +5,8 @@ import { useRouter } from 'next/navigation';
 import { FaComment, FaNewspaper, FaUsers } from 'react-icons/fa';
 import { Box, Typography, Grid, Card, CardContent, CardMedia, Skeleton } from '@mui/material';
 import styles from './adminPage.module.css';
-import withPermissions from '@/hoc/withPermissions';
 import { Permissions } from '@/utils/constant';
+import withPermissions from '@/components/hoc/WithPermissions';
 
 const cardData = [
     {
