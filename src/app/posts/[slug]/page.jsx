@@ -30,9 +30,9 @@ const stripHtml = (input) => {
 const formatDesc = (input) => {
   let out = input;
 
-  // If the description is longer than 160 characters, truncate it and add ...
-  if (out.length > 160) {
-    out = out.substring(0, 160) + "...";
+  // If the description is longer than 157 characters, truncate it and add ...
+  if (out.length > 157) {
+    out = out.substring(0, 157) + "...";
   }
 
   return out;
