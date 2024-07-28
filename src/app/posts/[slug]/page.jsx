@@ -18,23 +18,31 @@ const getData = async (slug) => {
   return res.json();
 };
 
+const stripHtml = (input) => {
+  let out = input;
+
+  // Remove all html tags from input
+  out = out.replace(/(<([^>]+)>)/gi, "");
+
+  return out;
+};
+
 // Function to generate metadata based on post content
 export async function generateMetadata({ params }) {
   const { slug } = params;
   const data = await getData(slug);
 
+  const title = data?.metadata?.title || data?.title || "Default Title";
+  const description = data?.metadata?.desc ? data.metadata.desc.substring(0, 160) : data?.desc ? stripHtml(data.desc).substring(0, 160) : "Default Description";
+  const images = data?.metadata?.image ? [{ url: data.metadata.image, alt: title }] : data?.img ? [{ url: data.img, alt: title }] : []
+
   return {
-    title: data?.title || "Default Title",
-    description: data?.desc ? data.desc.substring(0, 160) : "Default Description",
+    title,
+    description,
     openGraph: {
-      title: data?.title || "Default Title",
-      description: data?.desc ? data.desc.substring(0, 160) : "Default Description",
-      images: [
-        {
-          url: data?.img || "/default-image.jpg",
-          alt: data?.title || "Default Image",
-        },
-      ],
+      title,
+      description,
+      images,
     },
   };
 }
