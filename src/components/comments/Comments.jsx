@@ -48,7 +48,7 @@ const Comments = ({ postSlug }) => {
                 setUser(data);
 
                 const permissionsToCheck = [
-                    { key: 'isMod', permissions: [Permissions.DeleteComments, Permissions.ManageReports] },
+                    { key: 'isMod', permissions: [Permissions.DeleteComments] },
                     { key: 'canEngage', permissions: [Permissions.EngageComments] },
                     { key: 'canComment', permissions: [Permissions.Comment] },
                 ];

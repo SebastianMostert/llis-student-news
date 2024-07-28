@@ -18,6 +18,26 @@ const getData = async (slug) => {
   return res.json();
 };
 
+// Function to generate metadata based on post content
+export async function generateMetadata({ params }) {
+  const { slug } = params;
+  const data = await getData(slug);
+
+  return {
+    title: data?.title || "Default Title",
+    description: data?.desc ? data.desc.substring(0, 160) : "Default Description",
+    openGraph: {
+      title: data?.title || "Default Title",
+      description: data?.desc ? data.desc.substring(0, 160) : "Default Description",
+      images: [
+        {
+          url: data?.img || "/default-image.jpg",
+          alt: data?.title || "Default Image",
+        },
+      ],
+    },
+  };
+}
 
 const SinglePage = async ({ params }) => {
   const { slug } = params;
