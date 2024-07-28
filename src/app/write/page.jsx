@@ -1,10 +1,9 @@
 "use client";
 
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
-import dynamic from "next/dynamic"; // Import dynamic from next/dynamic
+import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
 import {
     getStorage,
     ref,
@@ -14,15 +13,10 @@ import {
 import { app } from "@/utils/firebase";
 import styles from "./writePage.module.css";
 import "react-quill/dist/quill.bubble.css";
+import { Permissions } from "@/utils/constant";
+import withPermissions from "@/components/hoc/WithPermissions";
 
-const ReactQuill = dynamic(() => import("react-quill"), { ssr: false }); // Dynamically import ReactQuill with no SSR
-
-const getUser = async () => {
-    const res = await fetch('/api/user/', { cache: "no-store" });
-    if (res.ok) return { data: await res.json(), authenticated: true };
-    if (res.status === 401) return { data: null, authenticated: false };
-    throw new Error();
-};
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 const getCategories = async () => {
     const res = await fetch('/api/categories', { cache: "no-store" });
@@ -31,13 +25,12 @@ const getCategories = async () => {
 };
 
 const getData = async () => {
-    const [userData, categoriesData] = await Promise.all([getUser(), getCategories()]);
-    return { userData, categoriesData };
+    const [categoriesData] = await Promise.all([getCategories()]);
+    return { categoriesData };
 };
 
 const WritePage = () => {
     const [categories, setCategories] = useState([]);
-    const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const [open, setOpen] = useState(false);
     const [file, setFile] = useState(null);
@@ -46,22 +39,17 @@ const WritePage = () => {
     const [title, setTitle] = useState("");
     const [catSlug, setCatSlug] = useState("");
 
-    const { status } = useSession();
     const router = useRouter();
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const { userData, categoriesData } = await getData();
-                if (!userData.authenticated) router.push("/");
+                const { categoriesData } = await getData();
                 setCategories(categoriesData);
 
-                // Set a default category
                 if (categoriesData.length > 0) {
                     setCatSlug(categoriesData[0].slug);
                 }
-
-                setUser(userData.data);
             } catch (error) {
                 console.error('Failed to fetch data:', error);
             } finally {
@@ -112,8 +100,6 @@ const WritePage = () => {
         uploadFile();
     }, [file]);
 
-    const isWriter = useMemo(() => user?.roles.includes('writer') || user?.roles.includes('admin'), [user]);
-
     const handleTitleChange = useCallback((e) => setTitle(e.target.value), []);
     const handleCategoryChange = useCallback((e) => setCatSlug(e.target.value), []);
     const handleFileChange = useCallback((e) => setFile(e.target.files[0]), []);
@@ -154,7 +140,6 @@ const WritePage = () => {
     };
 
     if (loading) return null;
-    if (!isWriter) router.push("/");
 
     const toolbarOptions = [
         [{ header: [1, 2, 3, 4, 5, 6, false] }],
@@ -221,4 +206,4 @@ const WritePage = () => {
     );
 };
 
-export default WritePage;
+export default withPermissions(WritePage, [Permissions.WritePost], '/');

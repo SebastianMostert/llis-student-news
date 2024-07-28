@@ -5,16 +5,8 @@ import { useRouter } from 'next/navigation';
 import { FaComment, FaNewspaper, FaUsers } from 'react-icons/fa';
 import { Box, Typography, Grid, Card, CardContent, CardMedia, Skeleton } from '@mui/material';
 import styles from './adminPage.module.css';
-
-const getData = async () => {
-    const res = await fetch('/api/user/', {
-        cache: "no-store",
-    });
-
-    if (res.ok) return { data: await res.json(), authenticated: true };
-    else if (res.status === 401) return { data: null, authenticated: false };
-    else throw new Error();
-};
+import withPermissions from '@/hoc/withPermissions';
+import { Permissions } from '@/utils/constant';
 
 const cardData = [
     {
@@ -132,45 +124,8 @@ const SkeletonCard = () => {
     );
 };
 
-
 const AdminPage = () => {
-    const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true);
-
     const router = useRouter();
-
-    useEffect(() => {
-        getData().then(({ data, authenticated }) => {
-            if (!authenticated) router.push("/login");
-            setUser(data);
-            setLoading(false);
-        });
-    }, [router]);
-
-    if (loading) {
-        return (
-            <Box sx={{ backgroundColor: 'var(--bg)', color: 'var(--textColor)', padding: 4 }}>
-                <Typography variant="h4" component="h1" sx={{ fontWeight: 'bold', textAlign: 'center', mb: 4 }}>
-                    <Skeleton variant="text" component={"h3"} width="25%" sx={{ marginLeft: 'auto', marginRight: 'auto' }} />
-                </Typography>
-                <Typography variant="h6" component="h2" sx={{ textAlign: 'center', mb: 4 }}>
-                    <Skeleton variant="text" component={"h5"} width="20%" sx={{ marginLeft: 'auto', marginRight: 'auto' }} />
-                </Typography>
-                <Grid container spacing={4}>
-                    {cardData.map((_, index) => (
-                        <SkeletonCard key={index} />
-                    ))}
-                </Grid>
-            </Box>
-        );
-    }
-
-    const isAdmin = user?.roles.includes("admin");
-
-    if (!isAdmin) {
-        router.push("/");
-        return null;
-    }
 
     return (
         <Box sx={{ backgroundColor: 'var(--bg)', color: 'var(--textColor)', padding: 4 }}>
@@ -189,4 +144,4 @@ const AdminPage = () => {
     );
 };
 
-export default AdminPage;
+export default withPermissions(AdminPage, [Permissions.Administrator]);

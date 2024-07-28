@@ -98,7 +98,9 @@ const ReportCard = ({ item: comment, mutate }) => {
                     item={comment}
                     hasModButtons={true}
                     hasEngagementButtons={false}
+                    canEngage={false}
                     mutate={mutate}
+                    isMod={true}
                     user={comment.user}
                     isLoggedIn={true}
                 />

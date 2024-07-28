@@ -177,7 +177,13 @@ const Modal = ({ isOpen, onClose, onReport, comment }) => {
                 {currentStep !== STEPS.SUMMARY ? (
                     <>
                         <div className={styles.commentWrapper}>
-                            <Comment item={comment} hasModButtons={false} hasEngagementButtons={false} />
+                            <Comment
+                                item={comment}
+                                hasModButtons={false}
+                                isMod={false}
+                                hasEngagementButtons={false}
+                                canEngage={false}
+                            />
                         </div>
                         {renderOptions()}
                     </>
@@ -189,7 +195,13 @@ const Modal = ({ isOpen, onClose, onReport, comment }) => {
                         </div>
                         <div className={styles.commentWrapper}>
                             <p className={styles.commentTitle}>Selected Comment</p>
-                            <Comment item={comment} hasModButtons={false} hasEngagementButtons={false} />
+                            <Comment
+                                item={comment}
+                                hasModButtons={false}
+                                isMod={false}
+                                hasEngagementButtons={false}
+                                canEngage={false}
+                            />
                         </div>
                     </>
                 )}

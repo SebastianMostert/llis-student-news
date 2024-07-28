@@ -25,44 +25,53 @@ const createEngagement = (commentId, like, dislike) => fetchRequest('/api/commen
 const deleteEngagement = (id, like, dislike) => fetchRequest('/api/comments/engage', 'DELETE', { id, like, dislike });
 const createReport = (commentId, reportOptions) => fetchRequest('/api/comments/report', 'POST', { commentId, reportOptions });
 
-const Comment = ({ hasModButtons, hasEngagementButtons, item, mutate, key, isLoggedIn, user }) => {
+const Comment = ({
+    hasModButtons,
+    hasEngagementButtons,
+    item,
+    mutate,
+    isLoggedIn,
+    user,
+    isMod,
+    canEngage = false,
+}) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const isMod = user?.roles.includes('moderator') || user?.roles.includes('admin');
+
     const isAuthor = item.user.email === user?.email;
     const canDelete = isAuthor || isMod;
+    const showDeleteButton = canDelete && hasModButtons;
 
-    const { Like, Dislike } = item;
-    const hasLiked = Like?.some((like) => like.userEmail === user?.email);
-    const hasDisliked = Dislike?.some((dislike) => dislike.userEmail === user?.email);
+    const disableEngagementButton = !isLoggedIn || !canEngage;
+    const disableDeleteButton = !isLoggedIn || !canDelete;
+
+    const { Like = [], Dislike = [] } = item;
+    const hasLiked = Like.some((like) => like.userEmail === user?.email);
+    const hasDisliked = Dislike.some((dislike) => dislike.userEmail === user?.email);
 
     const handleEngagement = async (type) => {
-        const likeId = Like?.find((like) => like.userEmail === user?.email)?.id;
-        const dislikeId = Dislike?.find((dislike) => dislike.userEmail === user?.email)?.id;
+        const likeId = Like.find((like) => like.userEmail === user?.email)?.id;
+        const dislikeId = Dislike.find((dislike) => dislike.userEmail === user?.email)?.id;
 
         try {
             if (type === 'like') {
                 if (hasLiked) {
                     await deleteEngagement(likeId, true, false);
-                } else if (hasDisliked) {
-                    await deleteEngagement(dislikeId, false, true);
-                    await createEngagement(item.id, true, false);
                 } else {
+                    if (hasDisliked) await deleteEngagement(dislikeId, false, true);
                     await createEngagement(item.id, true, false);
                 }
             } else if (type === 'dislike') {
                 if (hasDisliked) {
                     await deleteEngagement(dislikeId, false, true);
-                } else if (hasLiked) {
-                    await deleteEngagement(likeId, true, false);
-                    await createEngagement(item.id, false, true);
                 } else {
+                    if (hasLiked) await deleteEngagement(likeId, true, false);
                     await createEngagement(item.id, false, true);
                 }
             }
 
             mutate();
         } catch (error) {
-            console.error(`Failed to engage with comment: ${error}`);
+            console.error(`Failed to engage with comment: ${error.message}`);
         }
     };
 
@@ -71,7 +80,7 @@ const Comment = ({ hasModButtons, hasEngagementButtons, item, mutate, key, isLog
             await deleteComment(item.id);
             mutate();
         } catch (error) {
-            console.error('Failed to delete comment:', error);
+            console.error('Failed to delete comment:', error.message);
         }
     };
 
@@ -83,14 +92,14 @@ const Comment = ({ hasModButtons, hasEngagementButtons, item, mutate, key, isLog
             await createReport(item.id, options);
             mutate();
         } catch (error) {
-            console.error('Failed to delete comment:', error);
+            console.error('Failed to report comment:', error.message);
         } finally {
             closeModal();
         }
     };
 
     return (
-        <div className={styles.comment} key={key}>
+        <div className={styles.comment}>
             <div className={styles.user}>
                 {item.user.image && (
                     <Image
@@ -112,7 +121,7 @@ const Comment = ({ hasModButtons, hasEngagementButtons, item, mutate, key, isLog
                 <div className={styles.actions}>
                     <button
                         className={styles.button}
-                        disabled={!isLoggedIn}
+                        disabled={disableEngagementButton}
                         onClick={() => handleEngagement('like')}
                     >
                         <FaThumbsUp />
@@ -120,7 +129,7 @@ const Comment = ({ hasModButtons, hasEngagementButtons, item, mutate, key, isLog
                     </button>
                     <button
                         className={styles.button}
-                        disabled={!isLoggedIn}
+                        disabled={disableEngagementButton}
                         onClick={() => handleEngagement('dislike')}
                     >
                         <FaThumbsDown />
@@ -135,19 +144,17 @@ const Comment = ({ hasModButtons, hasEngagementButtons, item, mutate, key, isLog
                     </button>
                 </div>
             )}
-            {hasModButtons && canDelete && (
+            {showDeleteButton && (
                 <div className={styles.modActions}>
                     <button
                         className={styles.modButton}
-                        disabled={!isLoggedIn}
+                        disabled={disableDeleteButton}
                         onClick={handleDelete}
                     >
                         <FaTrash />
                     </button>
                 </div>
-            )
-            }
-
+            )}
 
             <Modal
                 isOpen={isModalOpen}

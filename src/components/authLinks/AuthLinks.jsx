@@ -5,19 +5,12 @@ import { useEffect, useState, useMemo, useCallback } from 'react';
 import styles from './authLinks.module.css';
 import Link from 'next/link';
 import { signOut, useSession } from 'next-auth/react';
-
-const getData = async () => {
-  const res = await fetch('/api/user/', {
-    cache: "no-store",
-  });
-
-  if (res.ok) return { data: await res.json(), authenticated: true };
-  else if (res.status === 401) return { data: null, authenticated: false };
-  else throw new Error();
-};
+import { checkPermissions } from '@/utils/checkPermissions';
+import { Permissions } from '@/utils/constant';
 
 const AuthLinks = () => {
-  const [user, setUser] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [isWriter, setIsWriter] = useState(false);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
   const { status } = useSession();
@@ -25,10 +18,17 @@ const AuthLinks = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const { data, authenticated } = await getData();
-        if (authenticated) {
-          setUser(data);
-        }
+        setIsAdmin(await checkPermissions({
+          permissionsToCheck: [
+            Permissions.Administrator
+          ],
+        }));
+
+        setIsWriter(await checkPermissions({
+          permissionsToCheck: [
+            Permissions.WritePost
+          ],
+        }));
       } catch (error) {
         console.error('Failed to fetch data:', error);
       } finally {
@@ -40,8 +40,6 @@ const AuthLinks = () => {
   }, []);
 
   const isAuthenticated = useMemo(() => status === 'authenticated', [status]);
-  const isAdmin = useMemo(() => user?.roles.includes('admin'), [user]);
-  const isWriter = useMemo(() => user?.roles.includes('writer') || isAdmin, [user, isAdmin]);
 
   const toggleMenu = useCallback(() => setOpen(prev => !prev), []);
 

@@ -15,6 +15,17 @@ export const GET = async (req) => {
     const query = {
         where: {
             email: session?.user?.email
+        },
+        include: {
+            roles: {
+                include: {
+                    rolePermissions: {
+                        include: {
+                            permission: true
+                        }
+                    }
+                }
+            }
         }
     }
 
