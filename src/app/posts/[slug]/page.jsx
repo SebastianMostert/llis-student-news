@@ -27,13 +27,24 @@ const stripHtml = (input) => {
   return out;
 };
 
+const formatDesc = (input) => {
+  let out = input;
+
+  // If the description is longer than 160 characters, truncate it and add ...
+  if (out.length > 160) {
+    out = out.substring(0, 160) + "...";
+  }
+
+  return out;
+}
+
 // Function to generate metadata based on post content
 export async function generateMetadata({ params }) {
   const { slug } = params;
   const data = await getData(slug);
 
   const title = data?.metadata?.title || data?.title || "Default Title";
-  const description = data?.metadata?.desc ? data.metadata.desc.substring(0, 160) : data?.desc ? stripHtml(data.desc).substring(0, 160) : "Default Description";
+  const description = data?.metadata?.desc ? formatDesc(data.metadata.desc) : data?.desc ? formatDesc(stripHtml(data.desc)) : "Default Description";
   const images = data?.metadata?.image ? [{ url: data.metadata.image, alt: title }] : data?.img ? [{ url: data.img, alt: title }] : []
 
   return {
