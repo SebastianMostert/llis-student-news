@@ -1,4 +1,4 @@
-import React, {Suspense} from "react";
+import React, { Suspense } from "react";
 import styles from "./navbar.module.css";
 import Image from "next/image";
 import Link from "next/link";
@@ -15,13 +15,13 @@ const Navbar = () => {
             </div>
             <Link href="/" className={styles.logo}>LLIS - Student News</Link>
             <div className={styles.links}>
-<Suspense fallback={<></>}>
-                <ThemeToggle />
-</Suspense>
+                <Suspense fallback={<></>}>
+                    <ThemeToggle />
+                </Suspense>
                 <Link href="/contact" className={styles.link}>Contact</Link>
                 <Link href="/about" className={styles.link}>About</Link>
                 <Suspense fallback={<></>}>
-                   <AuthLinks />
+                    <AuthLinks />
                 </Suspense>
             </div>
         </div>

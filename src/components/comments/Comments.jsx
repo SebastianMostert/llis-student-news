@@ -54,7 +54,10 @@ const Comments = ({ postSlug }) => {
                 ];
 
                 const permissionsResults = await Promise.all(permissionsToCheck.map(async ({ key, permissions }) => {
-                    const result = await checkPermissions({ permissionsToCheck: permissions });
+                    const result = await checkPermissions({
+                        permissionsToCheck: permissions,
+                        unauthRedirectTo: '/login'
+                    });
                     return { key, result };
                 }));
 

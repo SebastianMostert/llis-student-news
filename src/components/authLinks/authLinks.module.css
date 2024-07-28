@@ -2,6 +2,10 @@
     cursor: pointer;
 }
 
+.noScroll {
+    overflow: hidden;
+}
+
 .burger {
     width: 20px;
     height: 16px;

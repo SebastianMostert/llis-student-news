@@ -40,9 +40,12 @@ export async function getUserRoles(options) {
     let user = userToCheck || (await getUser()).data;
 
     if (!user) {
-        if (window.location.pathname !== unauthRedirectTo) {
-            window.location.href = unauthRedirectTo;
+        if (unauthRedirectTo) {
+            if (window.location.pathname !== unauthRedirectTo) {
+                window.location.href = unauthRedirectTo;
+            }
         }
+
         throw new Error('User not authenticated');
     }
 
@@ -54,7 +57,7 @@ export async function getUserRoles(options) {
 }
 
 export async function checkPermissions(options) {
-    const { permissionsToCheck, userToCheck, checkByID = false, unauthRedirectTo = '/login', redirectTo } = options;
+    const { permissionsToCheck, userToCheck, checkByID = false, unauthRedirectTo, redirectTo } = options;
 
     if (typeof window === 'undefined') {
         return false;
