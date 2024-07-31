@@ -26,7 +26,7 @@ const LoginPage = () => {
                 <div className={styles.socialButton} onClick={() => signIn('google')}>
                     Sign in with Google
                 </div>
-                <div className={styles.socialButton} onClick={() => signIn('email')}>
+                <div className={styles.socialButton} onClick={() => signIn()}>
                     Sign in with Email
                 </div>
             </div>
