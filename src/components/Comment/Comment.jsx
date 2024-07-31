@@ -104,14 +104,14 @@ const Comment = ({
                 {item.user.image && (
                     <Image
                         src={item.user.image}
-                        alt={`${item.user.name}'s profile`}
+                        alt={`${item?.user?.name || item?.user?.email || "Anonymous"}'s profile`}
                         width={50}
                         height={50}
                         className={styles.image}
                     />
                 )}
                 <div className={styles.userInfo}>
-                    <span className={styles.username}>{item.user.name}</span>
+                    <span className={styles.username}>{item?.user?.name || item?.user?.email || "Anonymous"}</span>
                     <span className={styles.date}>{formatDate(item.createdAt)}</span>
                 </div>
             </div>

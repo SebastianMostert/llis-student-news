@@ -38,9 +38,9 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid()) @map("_id")
+  id            String          @id @default(cuid()) @map("_id")
   name          String?
-  email         String    @unique
+  email         String          @unique
   emailVerified DateTime?
   image         String?
   accounts      Account[]
@@ -51,6 +51,22 @@ model User {
   Likes         Like[]
   Dislikes      Dislike[]
   Report        Report[]
+  Authenticator Authenticator[]
+}
+
+model Authenticator {
+  credentialID         String  @id @map("_id")
+  userId               String
+  providerAccountId    String
+  credentialPublicKey  String
+  counter              Int
+  credentialDeviceType String
+  credentialBackedUp   Boolean
+  transports           String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, credentialID])
 }
 
 model VerificationToken {

@@ -60,7 +60,7 @@ const MenuPosts = async ({ withImage }) => {
               {post.title}
             </h3>
             <div className={styles.detail}>
-              <span className={styles.username}>{post?.user?.name}</span>
+              <span className={styles.username}>{post?.user?.name || post?.user?.email || "Anonymous"}</span>
               <span className={styles.date}> - {formatDate(post.createdAt)}</span>
             </div>
           </div>
