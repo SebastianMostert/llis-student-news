@@ -68,6 +68,21 @@
     margin-bottom: 20px;
 }
 
+.postInfo {
+    display: flex;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.postInfoItem {
+    display: flex;
+    align-items: center;
+    font-size: 18px;
+    font-weight: 400;
+    color: var(--softTextColor);
+    gap: 5px;
+}
+
 @media screen and (max-width: 1536px) {
     .title {
         font-size: 54px;

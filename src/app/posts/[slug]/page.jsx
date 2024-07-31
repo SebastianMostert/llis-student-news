@@ -5,18 +5,36 @@ import Comments from "@/components/comments/Comments";
 import { getBaseUrl } from "@/utils/config";
 import MediaDisplay from "@/components/mediaDisplay/MediaDisplay";
 import formatDate from "@/utils/formatDate";
+import { FaThumbsUp, FaThumbsDown, FaClock, FaEye } from "react-icons/fa";
+import readingTime from "reading-time";
 
 const getData = async (slug) => {
-  const res = await fetch(`${getBaseUrl()}/api/posts/${slug}`, {
-    cache: "no-store",
+  // This should be true if the current user has not visited the post in the past 30 minutes
+  // The value is false if the user has visited the post in the past 30 minutes
+  let shouldIncrementViews = true;
+
+  const res = await fetch(`${getBaseUrl()}/api/posts/${slug}?incrementViews=${shouldIncrementViews}`, {
+    cache: "no-store"
   });
 
   if (!res.ok) {
-    throw new Error("Failed");
+    throw new Error("Failed to fetch data");
   }
 
   return res.json();
 };
+
+const getDataMeta = async (slug) => {
+  const res = await fetch(`${getBaseUrl()}/api/posts/${slug}/metadata`, {
+    cache: "no-store",
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch data");
+  }
+
+  return res.json();
+}
 
 const stripHtml = (input) => {
   let out = input;
@@ -41,7 +59,7 @@ const formatDesc = (input) => {
 // Function to generate metadata based on post content
 export async function generateMetadata({ params }) {
   const { slug } = params;
-  const data = await getData(slug);
+  const data = await getDataMeta(slug);
 
   const title = data?.metadata?.title || data?.title || "Default Title";
   const description = data?.metadata?.desc ? formatDesc(data.metadata.desc) : data?.desc ? formatDesc(stripHtml(data.desc)) : "Default Description";
@@ -60,8 +78,24 @@ export async function generateMetadata({ params }) {
 
 const SinglePage = async ({ params }) => {
   const { slug } = params;
-
   const data = await getData(slug);
+
+  // Temp vars for post info
+  const likes = data?.likes || 0;
+  const dislikes = data?.dislikes || 0;
+  const views = data?.views || 0;
+
+  // In order to check this post actually exists
+  if (!data?.id) {
+    return (
+      <div className={styles.container}>
+        <h1 className={styles.title}>Post not found</h1>
+      </div>
+    );
+  }
+
+  // Calculate reading time
+  const readingTime_ = readingTime(stripHtml(data.desc));
 
   return (
     <div className={styles.container}>
@@ -79,11 +113,19 @@ const SinglePage = async ({ params }) => {
               <span className={styles.date}>{formatDate(data.createdAt)}</span>
             </div>
           </div>
+          <div>
+            {/* Post information */}
+            <div className={styles.postInfo}>
+              {/* <span className={styles.postInfoItem}><FaThumbsUp /> {likes}</span> */}
+              {/* <span className={styles.postInfoItem}><FaThumbsDown /> {dislikes}</span> */}
+              <span className={styles.postInfoItem}><FaClock />{readingTime_.text}</span>
+              {/* <span className={styles.postInfoItem}><FaEye /> {views}</span> */}
+            </div>
+          </div>
         </div>
         {data?.img && (
           <div className={styles.imageContainer}>
             <MediaDisplay src={data?.img} />
-            {/* <Image src={data.img} alt="" fill className={styles.image} /> */}
           </div>
         )}
       </div>
