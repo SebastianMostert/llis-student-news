@@ -106,16 +106,7 @@ export const DELETE = async (req) => {
                 email: session.user.email,
             },
             include: {
-                Comment: true,
-                roles: {
-                    include: {
-                        rolePermissions: {
-                            include: {
-                                permission: true
-                            }
-                        }
-                    }
-                }
+                Comment: true
             }
         });
 
@@ -129,13 +120,8 @@ export const DELETE = async (req) => {
         // Get all the roles of the user
         const roles = user.roles;
 
-        // Get all the permissions of the user
-        const userPermissions = roles.flatMap(role =>
-            role.rolePermissions.map(rp => rp.permission.name.toLowerCase())
-        );
-
         // Check if the current user is a moderator or an admin
-        const isModerator = userPermissions.includes("delete comments") || userPermissions.includes("administrator");
+        const isModerator = roles.some((role) => role.name === "Moderator" || role.name === "Admin");
 
         // Check if the current user is the author of the comment
         const isAuthor = user.Comment.some((comment) => comment.id === commentId);

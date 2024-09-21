@@ -1,8 +1,12 @@
 :root {
-  --bg: white;
-  --textColor: black;
-  --softBg: #f0f0f0;
-  --softTextColor: #626262;
+  --bg: #DAE9C7;
+  /* Soft background color */
+  --textColor: #455476;
+  /* Darker color for text */
+  --softBg: #CF9391;
+  /* Soft accent or secondary background */
+  --softTextColor: #676D7C;
+  /* For subtler text */
 }
 
 * {
@@ -25,18 +29,26 @@ a {
   text-decoration: none;
 }
 
-.dark {
-  --bg: #0f172a;
-  --textColor: #ddd;
-  --softBg: #1f273a;
-  --softTextColor: #a6a6a6;
+.light {
+  --bg: #DAE9C7;
+  /* Soft background color */
+  --textColor: #455476;
+  /* Darker color for text */
+  --softBg: #CF9391;
+  /* Soft accent or secondary background */
+  --softTextColor: #676D7C;
+  /* For subtler text */
 }
 
-.light {
-  --bg: white;
-  --textColor: black;
-  --softBg: #f0f0f0;
-  --softTextColor: #626262;
+.dark {
+  --bg: #0f172a;
+  /* Dark background color */
+  --textColor: #ddd;
+  /* Light color for text */
+  --softBg: #1f273a;
+  /* Darker soft background */
+  --softTextColor: #a6a6a6;
+  /* Softer text color */
 }
 
 .container {
