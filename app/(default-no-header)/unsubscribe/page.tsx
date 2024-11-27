@@ -10,8 +10,9 @@ enum Status {
     ERROR = 'error',
 }
 
-async function SubscribePage({ searchParams }: { searchParams: { [key: string]: string | undefined } }) {
-    const id = searchParams.id;
+async function SubscribePage({ searchParams }: { searchParams: Promise<{ [key: string]: string | undefined }> }) {
+    const awaitedSearchParams = await searchParams;
+    const id = awaitedSearchParams.id;
 
     let status = Status.FAILURE;
     let message = "";
