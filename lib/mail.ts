@@ -1,7 +1,7 @@
 "use server";
 import nodemailer from 'nodemailer';
 
-const websiteLink = 'http://localhost:3000';
+const websiteLink = process.env.DOMAIN
 
 // Assume transporter is already configured
 const transporter = nodemailer.createTransport({
