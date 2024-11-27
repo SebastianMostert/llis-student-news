@@ -1,0 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  /* Font TT Fors */
+  font-family: 'TT Fors', sans-serif;
+
+  /* Remove scrollbar */
+  :-webkit-scrollbar {
+    display: none;
+  }
+
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
+}
+
+@layer components {
+  .navLink {
+    @apply hover:underline decoration-accent-light dark:decoration-accent-dark text-center decoration-2 active:underline underline-offset-8 rounded-full p-4 cursor-pointer hover:font-bold capitalize hover:scale-110 transition-transform duration-200 ease-out;
+  }
+
+  .headerTitle {
+    @apply text-4xl font-serif capitalize px-10 pt-5 underline decoration-accent-light dark:decoration-accent-dark decoration-2 underline-offset-4 decoration-double;
+  }
+
+  .rich-text h1,
+  .rich-text h2,
+  .rich-text h3 {
+    margin-top: 1rem;
+    font-weight: bold;
+  }
+
+  .rich-text p {
+    margin: 0.5rem 0;
+  }
+
+  .rich-text img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+}
+
+@font-face {
+  font-family: 'TT Fors';
+  src: url('/fonts/tt-fors/TT Fors Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
