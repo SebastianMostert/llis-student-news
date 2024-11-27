@@ -1,7 +1,7 @@
 "use server";
 import nodemailer from 'nodemailer';
 
-const websiteLink = process.env.DOMAIN
+const websiteLink = "https://llis-student-news.vercel.app"
 
 // Assume transporter is already configured
 const transporter = nodemailer.createTransport({
