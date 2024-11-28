@@ -8,6 +8,7 @@ import { Category } from "@prisma/client";
 import { IoAddCircleOutline } from "react-icons/io5";
 import Image from "next/image";
 import { commands, ICommand } from "@uiw/react-md-editor";
+import { createPost } from "@/actions/post";
 
 // Dynamically import MDEditor
 const MDEditor = dynamic(() => import("@uiw/react-md-editor"), { ssr: false });
@@ -78,10 +79,28 @@ const NewArticlePage = () => {
         setShowMediaPopup(false);
     };
 
-    const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log({ title, content, selectedCategory, image: imageURL });
-        alert(`Article "${title}" created successfully!`);
+
+        const catID = selectedCategory ? selectedCategory.id : null;
+
+        if (!title || !content || !catID) {
+            alert("Please fill in all required fields.");
+            return;
+        }
+
+        const res = await createPost({
+            content,
+            title,
+            categoryId: catID,
+            imageUrl: imageURL || "",
+            createdAt: new Date(),
+            authorId: "674392530db2b627f7aa630a",
+            slug: title.replace(/\s+/g, '-').toLowerCase(),
+        })
+        
+        // Redirect to the newly created article page
+        window.location.href = `/article/${res.slug}`
     };
 
     return (

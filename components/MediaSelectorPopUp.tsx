@@ -1,21 +1,20 @@
 "use client";
 
-import { getMedia, uploadMedia } from '@/actions/media';
+import { getMedia, uploadMedia, deleteMedia } from '@/actions/media'; // Add deleteMedia to handle server deletion
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { IoAddCircleOutline } from 'react-icons/io5';
 
 const MediaSelectorPopUp = ({ onSelect, selected }: { onSelect: (url: string) => void, selected?: string }) => {
     const [mediaFiles, setMediaFiles] = useState<string[]>([]);
-    const [newFile, setNewFile] = useState<File | null>(null); // For handling file upload
-    const [isUploading, setIsUploading] = useState(false); // Track upload status
+    const [newFile, setNewFile] = useState<File | null>(null);
+    const [isUploading, setIsUploading] = useState(false);
+    const [contextMenu, setContextMenu] = useState<{ x: number; y: number; file: string } | null>(null);
 
     useEffect(() => {
-        // Fetch the list of images, which can be external links or from /public/media folder
         const fetchMediaFiles = async () => {
             try {
                 const urls = await getMedia();
-                console.log('Fetched media files:', urls);
                 setMediaFiles(urls);
             } catch (error) {
                 console.error('Error fetching media files:', error);
@@ -25,7 +24,6 @@ const MediaSelectorPopUp = ({ onSelect, selected }: { onSelect: (url: string) =>
         fetchMediaFiles();
     }, []);
 
-    // Handle file selection
     const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files ? event.target.files[0] : null;
         if (file) {
@@ -33,21 +31,33 @@ const MediaSelectorPopUp = ({ onSelect, selected }: { onSelect: (url: string) =>
             setIsUploading(true);
 
             try {
-                // Upload the file
                 const uploadedUrl = await uploadMedia(file);
-                console.log('File uploaded successfully:', uploadedUrl);
-
-                // Add the newly uploaded media file to the mediaFiles list
                 setMediaFiles(prevMediaFiles => [...prevMediaFiles, uploadedUrl]);
-
-                // Call the onSelect with the uploaded media URL
                 onSelect(uploadedUrl);
             } catch (error) {
                 console.error('Error uploading file:', error);
             } finally {
-                setIsUploading(false); // Reset uploading state
+                setIsUploading(false);
             }
         }
+    };
+
+    const handleDelete = async (file: string) => {
+        const confirmDelete = window.confirm('Are you sure you want to delete this media?');
+        if (confirmDelete) {
+            try {
+                // Remove file on the server (if applicable)
+                await deleteMedia(file);
+                // Update the local state
+                setMediaFiles(prevMediaFiles => prevMediaFiles.filter(media => media !== file));
+                if (selected === file) {
+                    onSelect(''); // Deselect the deleted file
+                }
+            } catch (error) {
+                console.error('Error deleting file:', error);
+            }
+        }
+        setContextMenu(null); // Close the context menu
     };
 
     return (
@@ -57,7 +67,6 @@ const MediaSelectorPopUp = ({ onSelect, selected }: { onSelect: (url: string) =>
 
                 {/* Media files grid */}
                 <div className="grid grid-cols-3 gap-4">
-                    {/* Show placeholder to upload new media */}
                     <div
                         className="cursor-pointer rounded-md overflow-hidden flex justify-center items-center bg-gray-200 dark:bg-gray-800"
                         onClick={() => document.getElementById("file-upload")?.click()}
@@ -65,37 +74,55 @@ const MediaSelectorPopUp = ({ onSelect, selected }: { onSelect: (url: string) =>
                         <IoAddCircleOutline className="text-4xl text-gray-500" />
                     </div>
 
-                    {/* Show existing media files */}
                     {mediaFiles.map((file, index) => (
                         <div
                             key={index}
-                            className={`cursor-pointer border rounded-md overflow-hidden hover:shadow-lg ${file === selected ? 'border-blue-500' : 'border-none'}`}
+                            className={`relative cursor-pointer border rounded-md overflow-hidden hover:shadow-lg ${
+                                file === selected ? 'border-blue-500' : 'border-none'
+                            }`}
                             onClick={() => onSelect(file)}
+                            onContextMenu={(e) => {
+                                e.preventDefault();
+                                setContextMenu({ x: e.clientX, y: e.clientY, file });
+                            }}
                         >
                             <Image
                                 src={file}
                                 alt={`Media ${index}`}
                                 className="w-full h-full object-cover"
-                                width={200} // Setting a base width for image
-                                height={200} // Keeping a square aspect ratio, adjust as needed
+                                width={200}
+                                height={200}
                             />
                         </div>
                     ))}
                 </div>
 
-                {/* File upload input */}
                 <input
                     id="file-upload"
                     type="file"
                     accept="image/*"
                     className="hidden"
                     onChange={handleFileChange}
-                    disabled={isUploading} // Disable input while uploading
+                    disabled={isUploading}
                 />
 
-                {/* Optional: Show a loading spinner while uploading */}
                 {isUploading && (
                     <div className="mt-4 text-center text-gray-600 dark:text-gray-300">Uploading...</div>
+                )}
+
+                {contextMenu && (
+                    <div
+                        className="fixed bg-white dark:bg-gray-800 text-black dark:text-white rounded shadow-lg py-2 z-50"
+                        style={{ top: contextMenu.y, left: contextMenu.x }}
+                        onClick={() => setContextMenu(null)}
+                    >
+                        <button
+                            className="block w-full text-left px-4 py-2 hover:bg-gray-200 dark:hover:bg-gray-700"
+                            onClick={() => handleDelete(contextMenu.file)}
+                        >
+                            Delete
+                        </button>
+                    </div>
                 )}
 
                 <button

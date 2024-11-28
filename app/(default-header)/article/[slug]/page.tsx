@@ -2,12 +2,14 @@ import LiveTimestamp from "@/components/LiveTimestamp";
 import { PostWithAuthor } from "@/types";
 import { db } from "@/lib/db";
 import ArticleNotFound from "@/components/ArticleNotFound";
+import ReactMarkdown from "react-markdown";
+import rehypeRaw from "rehype-raw";
+import removeMarkdown from "remove-markdown";
 
 export async function generateMetadata({ params }: { params: Promise<{ [key: string]: string | undefined }> }) {
     const awaitedParams = await params;
     const { slug } = awaitedParams;
 
-    // Fetch the article to generate metadata
     const article: PostWithAuthor | null = await db.post.findUnique({
         where: { slug },
         include: { author: true },
@@ -20,15 +22,18 @@ export async function generateMetadata({ params }: { params: Promise<{ [key: str
         };
     }
 
+    // Remove Markdown and limit to 150 characters for the description
+    const plainTextContent = removeMarkdown(article.content).slice(0, 150);
+
     return {
         title: article.title,
-        description: article.content.slice(0, 150), // Limit description to 150 characters
+        description: plainTextContent,
         openGraph: {
             title: article.title,
-            description: article.content.slice(0, 150),
+            description: plainTextContent,
             images: [
                 {
-                    url: article.imageUrl, // Use a default image if none is provided
+                    url: article.imageUrl || "/default-image.png",
                     width: 1200,
                     height: 630,
                     alt: article.title,
@@ -39,8 +44,8 @@ export async function generateMetadata({ params }: { params: Promise<{ [key: str
         twitter: {
             card: "summary_large_image",
             title: article.title,
-            description: article.content.slice(0, 150),
-            images: [article.imageUrl],
+            description: plainTextContent,
+            images: [article.imageUrl || "/default-image.png"],
         },
     };
 }
@@ -56,7 +61,6 @@ async function ArticlePage({ params }: { params: Promise<{ [key: string]: string
         include: { author: true },
     });
 
-
     if (!article) {
         return <ArticleNotFound />;
     }
@@ -68,7 +72,7 @@ async function ArticlePage({ params }: { params: Promise<{ [key: string]: string
                     <img
                         src={article.imageUrl}
                         alt={article.title}
-                        className='h-50 max-w-md mx-auto md:max-w-lg lg:max-w-xl object-cover rounded-lg shadow-md'
+                        className="h-50 max-w-md mx-auto md:max-w-lg lg:max-w-xl object-cover rounded-lg shadow-md"
                     />
                 )}
 
@@ -80,12 +84,14 @@ async function ArticlePage({ params }: { params: Promise<{ [key: string]: string
                         <p className="pl-4"><LiveTimestamp time={article.createdAt} /></p>
                     </div>
 
-                    <p className="pt-4">{article.content}</p>
+                    {/* Render the Markdown content */}
+                    <ReactMarkdown rehypePlugins={[rehypeRaw]} className="prose dark:prose-invert pt-4">
+                        {article.content}
+                    </ReactMarkdown>
                 </div>
-
             </section>
         </article>
-    )
+    );
 }
 
-export default ArticlePage
+export default ArticlePage;
