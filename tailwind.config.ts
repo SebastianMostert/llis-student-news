@@ -37,7 +37,6 @@ export default {
 	},
 	darkMode: ["class"],
 	plugins: [
-		require("@tailwindcss/line-clamp"),
 		require("tailwindcss-animate"),
 		require("@tailwindcss/typography")
 	],

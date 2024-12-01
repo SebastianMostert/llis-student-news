@@ -1,6 +1,35 @@
 import Google from "next-auth/providers/google"
 import Nodemailer from "next-auth/providers/nodemailer"
-import type { NextAuthConfig } from "next-auth"
+import type { DefaultSession, NextAuthConfig } from "next-auth"
+
+declare module "next-auth" {
+    /**
+     * Returned by `auth`, `useSession`, `getSession` and received as a prop on the `SessionProvider` React Context
+     */
+    interface Session {
+        user: {
+            /** The user's postal address. */
+            firstName?: string;
+            lastName?: string;
+        } & DefaultSession["user"]
+    }
+
+    interface User {
+        firstName?: string;
+        lastName?: string;
+    }
+}
+
+// The `JWT` interface can be found in the `next-auth/jwt` submodule
+import { JWT } from "next-auth/jwt"
+
+declare module "next-auth/jwt" {
+    /** Returned by the `jwt` callback and `auth`, when using JWT sessions */
+    interface JWT {
+        firstName?: string;
+        lastName?: string;
+    }
+}
 
 // Notice this is only an object, not a full Auth.js instance
 export default {
@@ -24,8 +53,8 @@ export default {
             if (account && profile) {
                 // Split full name into first and last name
                 const [firstName, ...lastNameParts] = profile.name?.split(" ") || [];
-                token.firstName = firstName || null;
-                token.lastName = lastNameParts.join(" ") || null;
+                token.firstName = firstName || undefined;
+                token.lastName = lastNameParts.join(" ") || undefined;
             }
             return token;
         },
@@ -36,10 +65,11 @@ export default {
             return session;
         },
         async signIn({ user, profile }) {
-            if (profile.name) {
-                const [firstName, ...lastNameParts] = profile.name.split(" ");
-                user.firstName = firstName || null;
-                user.lastName = lastNameParts.join(" ") || null;
+            if (profile && profile.name) {
+                const firstName = profile.name.split(" ")[0];
+                const lastNameParts = profile.name.split(" ").slice(1);
+                user.firstName = firstName || undefined;
+                user.lastName = lastNameParts.join(" ") || undefined;
                 delete user.name; // Remove the 'name' property
                 delete user.id; // Remove the 'name' property
             }
