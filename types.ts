@@ -1,6 +1,6 @@
 import { Prisma } from "@prisma/client";
 
-export type PostWithAuthor = Prisma.PostGetPayload<{ include: { author: true } }>;
+export type PostWithAuthor = Prisma.PostGetPayload<{ include: { author: true, image: true } }>;
 
 export enum NewVerificationResponses {
     INVALID_TOKEN = "Invalid token",

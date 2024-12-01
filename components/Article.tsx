@@ -13,9 +13,9 @@ const Article = ({ article }: Props) => {
 
     return (
         <article className='bg-secondaryBg-light dark:bg-secondaryBg-dark flex flex-col rounded-lg shadow-lg hover:scale-105 hover:shadow-lg hover:bg-slate-200 transition-all duration-200 ease-out'>
-            {article.imageUrl && (
+            {article.image && (
                 <img
-                    src={article.imageUrl}
+                    src={`data:${article.image.mimeType};base64,${article.image.content}`}
                     alt={article.title}
                     className='h-56 w-full object-cover rounded-t-lg shadow'
                 />

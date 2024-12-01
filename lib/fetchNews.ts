@@ -24,11 +24,12 @@ export const fetchNews = async (
         },
         include: {
             author: true,
+            image: true
         },
         take: 20,
     });
 
     const news = sortNewsByImage(dbData);
 
-    return news;
+    return news as PostWithAuthor[];
 };

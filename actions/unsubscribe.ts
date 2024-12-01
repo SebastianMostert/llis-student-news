@@ -34,8 +34,7 @@ export async function unsubscribe(id: string) {
     }).catch((error) => {
         throw new Error("Error unsubscribing user");
     })
-
-    // TODO: Send welcome email
+    
     sendUnsubscriptionConfirmationEmail(existingUser_.email);
 
     return UnsubscribeResponses.UNSUBSCRIBED;

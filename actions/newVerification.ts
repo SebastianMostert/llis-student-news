@@ -39,7 +39,7 @@ export async function newVerification(token: string) {
         }
     })
 
-    await db.verificationToken.delete({
+    await db.emailVerificationToken.delete({
         where: {
             id: existingToken.id
         }

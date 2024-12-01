@@ -4,7 +4,9 @@ import { db } from "@/lib/db";
 import ArticleNotFound from "@/components/ArticleNotFound";
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
+import remarkGfm from 'remark-gfm'
 import removeMarkdown from "remove-markdown";
+import Image from "next/image";
 
 export async function generateMetadata({ params }: { params: Promise<{ [key: string]: string | undefined }> }) {
     const awaitedParams = await params;
@@ -12,7 +14,7 @@ export async function generateMetadata({ params }: { params: Promise<{ [key: str
 
     const article: PostWithAuthor | null = await db.post.findUnique({
         where: { slug },
-        include: { author: true },
+        include: { author: true, image: true },
     });
 
     if (!article) {
@@ -25,6 +27,11 @@ export async function generateMetadata({ params }: { params: Promise<{ [key: str
     // Remove Markdown and limit to 150 characters for the description
     const plainTextContent = removeMarkdown(article.content).slice(0, 150);
 
+    // Generate a data URL for the image if available
+    const imageUrl = article.image
+        ? `data:${article.image.mimeType};base64,${article.image.content}`
+        : "/default-image.png"; // Replace with your default image path
+
     return {
         title: article.title,
         description: plainTextContent,
@@ -33,7 +40,7 @@ export async function generateMetadata({ params }: { params: Promise<{ [key: str
             description: plainTextContent,
             images: [
                 {
-                    url: article.imageUrl || "/default-image.png",
+                    url: imageUrl,
                     width: 1200,
                     height: 630,
                     alt: article.title,
@@ -45,10 +52,11 @@ export async function generateMetadata({ params }: { params: Promise<{ [key: str
             card: "summary_large_image",
             title: article.title,
             description: plainTextContent,
-            images: [article.imageUrl || "/default-image.png"],
+            images: [imageUrl],
         },
     };
 }
+
 
 async function ArticlePage({ params }: { params: Promise<{ [key: string]: string | undefined }> }) {
     const awaitedParams = await params;
@@ -58,19 +66,28 @@ async function ArticlePage({ params }: { params: Promise<{ [key: string]: string
 
     const article: PostWithAuthor | null = await db.post.findUnique({
         where: { slug },
-        include: { author: true },
+        include: { author: true, image: true },
     });
 
     if (!article) {
         return <ArticleNotFound />;
     }
 
+    const fixedImage = {
+        image: article.image
+            ? {
+                ...article.image,
+                content: Buffer.from(article.image.content).toString("base64"),
+            }
+            : null,
+    }
+    
     return (
         <article>
             <section className="flex flex-col lg:flex-row pb-24 px-0 lg:px-10">
-                {article.imageUrl && (
+                {fixedImage.image && (
                     <img
-                        src={article.imageUrl}
+                        src={`data:${fixedImage.image.mimeType};base64,${fixedImage.image.content}`}
                         alt={article.title}
                         className="h-50 max-w-md mx-auto md:max-w-lg lg:max-w-xl object-cover rounded-lg shadow-md"
                     />
@@ -85,7 +102,7 @@ async function ArticlePage({ params }: { params: Promise<{ [key: string]: string
                     </div>
 
                     {/* Render the Markdown content */}
-                    <ReactMarkdown rehypePlugins={[rehypeRaw]} className="prose dark:prose-invert pt-4">
+                    <ReactMarkdown rehypePlugins={[rehypeRaw]} remarkPlugins={[remarkGfm]} className="prose dark:prose-invert pt-4">
                         {article.content}
                     </ReactMarkdown>
                 </div>

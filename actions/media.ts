@@ -3,6 +3,10 @@
 import fsP from "fs/promises";
 import fs from 'fs';
 import path from 'path';
+import { Image } from "@prisma/client";
+import { Buffer } from 'buffer';
+
+export type TransformedImage = Omit<Image, 'content'> & { content: string };
 
 const subFolder = "/user-uploads"
 const uploadedFilesDir = path.join(process.cwd(), `public/${subFolder}`);
@@ -54,4 +58,60 @@ export async function deleteMedia(fileUrl: string): Promise<void> {
         console.error("Error deleting media:", error);
         throw new Error("Failed to delete media.");
     }
+}
+
+
+///////////////////////////////////
+// On the server: Encode Uint8Array to Base64
+
+export async function uploadImage(file: File): Promise<TransformedImage> {
+    // Convert File to Buffer
+    const buffer = await file.arrayBuffer();
+    const fileBuffer = Buffer.from(buffer);
+
+    // Save to MongoDB
+    const image = await db.image.create({
+        data: {
+            name: file.name,
+            mimeType: file.type,
+            size: file.size,
+            content: fileBuffer, // Binary data of the image
+        },
+    });
+
+    return {
+        id: image.id,
+        name: image.name,
+        mimeType: image.mimeType,
+        size: image.size,
+        createdAt: image.createdAt,
+        content: Buffer.from(image.content).toString('base64'),
+    };
+}
+
+export async function getImages(): Promise<TransformedImage[]> {
+    const images = await db.image.findMany();
+
+    return images.map((image) => ({
+        id: image.id,
+        name: image.name,
+        mimeType: image.mimeType,
+        size: image.size,
+        createdAt: image.createdAt,
+        content: Buffer.from(image.content).toString('base64'),
+    }));
+}
+
+export async function deleteImage(imageId: string): Promise<void> {
+    await db.image.delete({ where: { id: imageId } });
+}
+
+export async function checkImageUsage(imageId: string): Promise<number> {
+    const count = await db.post.count({
+        where: {
+            imageId: imageId,
+        },
+    });
+
+    return count;
 }

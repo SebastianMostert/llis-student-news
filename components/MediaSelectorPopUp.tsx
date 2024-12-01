@@ -1,21 +1,25 @@
 "use client";
 
-import { getMedia, uploadMedia, deleteMedia } from '@/actions/media'; // Add deleteMedia to handle server deletion
+import { getImages, uploadImage, deleteImage, TransformedImage, checkImageUsage } from '@/actions/media'; // Add deleteImage to handle server deletion
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { IoAddCircleOutline } from 'react-icons/io5';
+import imageCompression from 'browser-image-compression';
 
-const MediaSelectorPopUp = ({ onSelect, selected }: { onSelect: (url: string) => void, selected?: string }) => {
-    const [mediaFiles, setMediaFiles] = useState<string[]>([]);
+// Maximum file size limit in bytes (e.g., 5MB)
+const FILE_MAX_SIZE = 5 * 1024 * 1024; // 5 MB
+
+const MediaSelectorPopUp = ({ onSelect, selected, selectedId }: { onSelect: (id: string, url: string) => void; selected?: string; selectedId?: string }) => {
+    const [mediaFiles, setMediaFiles] = useState<TransformedImage[]>([]);
     const [newFile, setNewFile] = useState<File | null>(null);
     const [isUploading, setIsUploading] = useState(false);
-    const [contextMenu, setContextMenu] = useState<{ x: number; y: number; file: string } | null>(null);
+    const [contextMenu, setContextMenu] = useState<{ x: number; y: number; id: string } | null>(null);
 
     useEffect(() => {
         const fetchMediaFiles = async () => {
             try {
-                const urls = await getMedia();
-                setMediaFiles(urls);
+                const images = await getImages();
+                setMediaFiles(images);
             } catch (error) {
                 console.error('Error fetching media files:', error);
             }
@@ -26,39 +30,76 @@ const MediaSelectorPopUp = ({ onSelect, selected }: { onSelect: (url: string) =>
 
     const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files ? event.target.files[0] : null;
+
         if (file) {
-            setNewFile(file);
-            setIsUploading(true);
+            // Check original file size
+            if (file.size > FILE_MAX_SIZE) {
+                alert('File size exceeds the 5MB limit. Compressing...');
+            }
 
             try {
-                const uploadedUrl = await uploadMedia(file);
-                setMediaFiles(prevMediaFiles => [...prevMediaFiles, uploadedUrl]);
-                onSelect(uploadedUrl);
+                // Compress the image
+                const compressedFile = await imageCompression(file, {
+                    maxSizeMB: 5, // Target maximum size in MB
+                    maxWidthOrHeight: 1920, // Resize the image to fit within a max dimension
+                    useWebWorker: true, // Speed up compression using Web Workers
+                });
+
+                // Ensure compressed file size is within limit
+                if (compressedFile.size > FILE_MAX_SIZE) {
+                    alert('Compressed file size still exceeds the limit. Please choose a smaller file.');
+                    return;
+                }
+
+                setNewFile(compressedFile);
+                setIsUploading(true);
+
+                const uploadedImage = await uploadImage(compressedFile);
+                setMediaFiles((prevMediaFiles) => [...prevMediaFiles, uploadedImage]);
+                onSelect(uploadedImage.id, `data:${uploadedImage.mimeType};base64,${uploadedImage.content}`);
             } catch (error) {
-                console.error('Error uploading file:', error);
+                console.error('Error compressing or uploading file:', error);
             } finally {
                 setIsUploading(false);
             }
         }
     };
 
-    const handleDelete = async (file: string) => {
-        const confirmDelete = window.confirm('Are you sure you want to delete this media?');
-        if (confirmDelete) {
-            try {
-                // Remove file on the server (if applicable)
-                await deleteMedia(file);
-                // Update the local state
-                setMediaFiles(prevMediaFiles => prevMediaFiles.filter(media => media !== file));
-                if (selected === file) {
-                    onSelect(''); // Deselect the deleted file
+    const handleDelete = async (id: string) => {
+        try {
+            // Check how many posts are using this image
+            const usageCount = await checkImageUsage(id);
+
+            if (usageCount > 0) {
+                const confirmDelete = window.confirm(
+                    `This image is used in ${usageCount} post(s). Are you sure you want to delete it?`
+                );
+
+                if (!confirmDelete) {
+                    return; // Cancel the deletion if the user doesn't confirm
                 }
-            } catch (error) {
-                console.error('Error deleting file:', error);
+            } else {
+                const confirmDelete = window.confirm('Are you sure you want to delete this media?');
+                if (!confirmDelete) return; // Cancel the deletion if the user doesn't confirm
             }
+
+            // Remove file on the server
+            await deleteImage(id);
+
+            // Update the local state to remove the image
+            setMediaFiles((prevMediaFiles) => prevMediaFiles.filter((media) => media.id !== id));
+
+            // If the deleted image is currently selected, deselect it
+            if (selected === id) {
+                onSelect('', ''); // Deselect the deleted file
+            }
+
+        } catch (error) {
+            console.error('Error deleting file:', error);
         }
         setContextMenu(null); // Close the context menu
     };
+
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
@@ -74,20 +115,19 @@ const MediaSelectorPopUp = ({ onSelect, selected }: { onSelect: (url: string) =>
                         <IoAddCircleOutline className="text-4xl text-gray-500" />
                     </div>
 
-                    {mediaFiles.map((file, index) => (
+                    {mediaFiles.map(({ id, mimeType, content }, index) => (
                         <div
-                            key={index}
-                            className={`relative cursor-pointer border rounded-md overflow-hidden hover:shadow-lg ${
-                                file === selected ? 'border-blue-500' : 'border-none'
-                            }`}
-                            onClick={() => onSelect(file)}
+                            key={id}
+                            className={`relative cursor-pointer border rounded-md overflow-hidden hover:shadow-lg ${`data:${mimeType};base64,${content}` === selected ? 'border-blue-500' : 'border-none'
+                                }`}
+                            onClick={() => onSelect(id, `data:${mimeType};base64,${content}`)}
                             onContextMenu={(e) => {
                                 e.preventDefault();
-                                setContextMenu({ x: e.clientX, y: e.clientY, file });
+                                setContextMenu({ x: e.clientX, y: e.clientY, id });
                             }}
                         >
                             <Image
-                                src={file}
+                                src={`data:${mimeType};base64,${content}`}
                                 alt={`Media ${index}`}
                                 className="w-full h-full object-cover"
                                 width={200}
@@ -118,16 +158,17 @@ const MediaSelectorPopUp = ({ onSelect, selected }: { onSelect: (url: string) =>
                     >
                         <button
                             className="block w-full text-left px-4 py-2 hover:bg-gray-200 dark:hover:bg-gray-700"
-                            onClick={() => handleDelete(contextMenu.file)}
+                            onClick={() => handleDelete(contextMenu.id)}
                         >
                             Delete
                         </button>
                     </div>
                 )}
 
+                {/* TODO: When canceling use the already selected file */}
                 <button
                     className="mt-4 w-full bg-accent-light dark:bg-accent-dark hover:bg-accent-hover-light dark:hover:bg-accent-hover-dark text-white py-2 px-4 rounded-lg"
-                    onClick={() => onSelect(selected || '')}
+                    onClick={() => onSelect(selectedId || '', selected || '')}
                 >
                     Cancel
                 </button>

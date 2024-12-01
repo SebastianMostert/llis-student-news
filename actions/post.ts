@@ -7,3 +7,19 @@ import { Post } from "@prisma/client";
 export async function createPost(data: Omit<Post, "id">) {
     return await db.post.create({ data });
 }
+
+
+export async function checkSlugExists(slug: string) {
+    const existingPost = await db.post.findFirst({
+        where: {
+            slug
+        }
+    });
+    return new Promise<boolean>((resolve) => {
+        if (existingPost) {
+            resolve(true);
+        } else {
+            resolve(false);
+        }
+    })
+}

@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+"use client";
+
+import { useState } from 'react';
 import { CheckCircleIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline';
 import { sendVerificationCode } from '@/actions/sendVerificationCode';
 import { newVerification } from '@/actions/newVerification';
 import { NewVerificationResponses, SendCodeResponses, SubscribeResponses } from '@/types';
 import { subscribe } from '@/actions/subscribe';
+import SignInButtons from '../SignInButtons';
 
 const SubscribeForm = ({ email_ }: { email_?: string }) => {
     const [email, setEmail] = useState(email_ || '');
@@ -104,12 +107,12 @@ const SubscribeForm = ({ email_ }: { email_?: string }) => {
                 <>
                     <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">Subscribe to our Newsletter</h2>
                     <p className="text-gray-600 dark:text-gray-300 mb-6 text-center">
-                        Stay updated with our latest news and updates. Enter your email to subscribe!
+                        Stay updated with our latest news and updates. Sign Up to subscribe!
                     </p>
 
                     {/* First Name and Last Name Fields (Optional) */}
                     <div className="flex flex-col w-full mb-4">
-                        <input
+                        {/* <input
                             type="text"
                             value={firstName}
                             onChange={(e) => setFirstName(e.target.value)}
@@ -129,14 +132,9 @@ const SubscribeForm = ({ email_ }: { email_?: string }) => {
                             onChange={(e) => setEmail(e.target.value)}
                             placeholder="Enter your email"
                             className="mb-4 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600"
-                        />
+                        /> */}
 
-                        <button
-                            onClick={handleSubscribe}
-                            className="px-4 py-2 text-white rounded-md bg-accent-light dark:bg-accent-dark hover:bg-accent-hover-light dark:hover:bg-accent-hover-dark focus:outline-none"
-                        >
-                            Subscribe
-                        </button>
+                        <SignInButtons action="subscribe" />
                     </div>
                 </>
             )}

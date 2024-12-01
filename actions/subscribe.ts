@@ -31,7 +31,7 @@ export async function subscribe(email: string) {
         }
     })
 
-    // TODO: Send welcome email
+    
     sendSubscriptionConfirmationEmail(email, existingUser_.id);
     
     return SubscribeResponses.SUBSCRIBED;
