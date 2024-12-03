@@ -3,7 +3,7 @@
 import React, { MutableRefObject, useEffect, useRef } from 'react'
 import SubscribeForm from './newsletter/subscribeForm';
 
-const ModalSubscirbe = ({ isOpen, closeModal, email }: { isOpen: boolean; closeModal: () => void; email?: string }) => {
+const ModalSubscribe = ({ isOpen, closeModal, email }: { isOpen: boolean; closeModal: () => void; email?: string }) => {
     const modalRef: MutableRefObject<HTMLDivElement> | MutableRefObject<null> = useRef<HTMLDivElement>(null);
 
     // Close the modal if clicked outside of it
@@ -56,4 +56,4 @@ const ModalSubscirbe = ({ isOpen, closeModal, email }: { isOpen: boolean; closeM
     )
 }
 
-export default ModalSubscirbe
+export default ModalSubscribe

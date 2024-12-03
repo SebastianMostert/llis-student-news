@@ -164,8 +164,7 @@ const MediaSelectorPopUp = ({ onSelect, selected, selectedId }: { onSelect: (id:
                         </button>
                     </div>
                 )}
-
-                {/* TODO: When canceling use the already selected file */}
+                
                 <button
                     className="mt-4 w-full bg-accent-light dark:bg-accent-dark hover:bg-accent-hover-light dark:hover:bg-accent-hover-dark text-white py-2 px-4 rounded-lg"
                     onClick={() => onSelect(selectedId || '', selected || '')}

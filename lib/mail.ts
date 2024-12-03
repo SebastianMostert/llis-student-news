@@ -1,7 +1,7 @@
 "use server";
 import nodemailer from 'nodemailer';
 
-const websiteLink = "https://llis-student-news.vercel.app"
+const websiteLink = process.env.WEBSITE_LINK;
 
 // Assume transporter is already configured
 const transporter = nodemailer.createTransport({
@@ -91,7 +91,7 @@ export const sendVerificationEmail = async (
   });
 };
 
-export const sendSubscriptionConfirmationEmail = async (email: string, userID: string) => {
+export const sendSubscriptionConfirmationEmail = async (email: string, unsubscribeId: string) => {
   const html = `
     <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
       <h2 style="text-align: center; color: #0066cc;">Welcome to Keeping up with LLIS!</h2>
@@ -104,7 +104,7 @@ export const sendSubscriptionConfirmationEmail = async (email: string, userID: s
         </a>
       </div>
       <p style="font-size: 14px; color: #777; text-align: center;">
-        If you didn’t subscribe to this newsletter, please ignore this email or <a href="${websiteLink}/unsubscribe?id=${userID}" style="color: #0066cc; text-decoration: none;">unsubscribe here</a>.
+        If you didn’t subscribe to this newsletter, please ignore this email or <a href="${websiteLink}/unsubscribe?id=${unsubscribeId}" style="color: #0066cc; text-decoration: none;">unsubscribe here</a>.
       </p>
     </div>
   `;
@@ -126,7 +126,7 @@ export const sendSubscriptionConfirmationEmail = async (email: string, userID: s
   });
 };
 
-export const sendUnsubscriptionConfirmationEmail = async (email: string) => {
+export const sendUnsubscriptionConfirmationEmail = async (email: string, resubscribeId: string) => {
   const html = `
     <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
       <h2 style="text-align: center; color: #cc0000;">You Have Unsubscribed</h2>
@@ -134,7 +134,7 @@ export const sendUnsubscriptionConfirmationEmail = async (email: string) => {
         We're sorry to see you go! You have successfully unsubscribed from the <strong>Keeping up with LLIS</strong> newsletter.
       </p>
       <p style="font-size: 16px; color: #555; text-align: center;">
-        If this was a mistake or you change your mind, you can always <a href="${websiteLink}?subscribe=true&email=${email}" style="color: #0066cc; text-decoration: none;">subscribe again</a>.
+        If this was a mistake or you change your mind, you can always <a href="${websiteLink}/subscribe?id=${resubscribeId}" style="color: #0066cc; text-decoration: none;">subscribe again</a>.
       </p>
       <div style="text-align: center; margin: 20px 0;">
         <a href="${websiteLink}" style="background-color: #0066cc; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;">

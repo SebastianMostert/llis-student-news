@@ -29,6 +29,8 @@ model User {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  NewsletterSubscriber NewsletterSubscriber[]
 }
 
 model Account {
@@ -117,6 +119,19 @@ model Authenticator {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, credentialID])
+}
+
+model NewsletterSubscriber {
+  id     String  @id @default(auto()) @map("_id") @db.ObjectId
+  email  String  @unique
+  userId String? @db.ObjectId // Optional link to a User
+
+  isVerified Boolean @default(false) // Whether the email is verified
+
+  subscribedAt   DateTime? // When the subscription occurred
+  unsubscribedAt DateTime? // Optional field for tracking unsubscriptions
+
+  user User? @relation(fields: [userId], references: [id], onDelete: Cascade) // Relation to User
 }
 
 model Image {

@@ -7,35 +7,73 @@ import { db } from "@/lib/db";
 export async function unsubscribe(id: string) {
     // Check if user exists
 
-    const existingUser_ = await db.user.findUnique({
-        where: {
-            id
-        },
+    const existingSubscriber = await db.newsletterSubscriber.findUnique({
+        where: { id },
         select: {
-            id: true,
-            emailVerified: true,
             email: true,
-            subscribedToNewsletter: true
+            id: true,
+            isVerified: true,
+            subscribedAt: true,
+            unsubscribedAt: true,
         }
     }).catch((error) => {
         throw new Error("Error getting user to unsubscribe");
     })
 
-    if (!existingUser_) return UnsubscribeResponses.EMAIL_DOES_NOT_EXIST;
-    if (!existingUser_.subscribedToNewsletter) return UnsubscribeResponses.ALREADY_UNSUBSCRIBED;
+    if (!existingSubscriber) return UnsubscribeResponses.EMAIL_DOES_NOT_EXIST;
+    if (!existingSubscriber.subscribedAt) return UnsubscribeResponses.ALREADY_UNSUBSCRIBED;
 
-    await db.user.update({
+    await db.newsletterSubscriber.update({
         where: {
-            email: existingUser_.email
+            email: existingSubscriber.email
         },
         data: {
-            subscribedToNewsletter: false
+            isVerified: true,
+            unsubscribedAt: new Date(),
+            subscribedAt: null
         }
     }).catch((error) => {
         throw new Error("Error unsubscribing user");
     })
-    
-    sendUnsubscriptionConfirmationEmail(existingUser_.email);
+
+    sendUnsubscriptionConfirmationEmail(existingSubscriber.email, existingSubscriber.id);
+
+    return UnsubscribeResponses.UNSUBSCRIBED;
+};
+
+export async function unsubscribeWithEmail(email: string) {
+    // Check if user exists
+
+    const existingSubscriber = await db.newsletterSubscriber.findUnique({
+        where: { email },
+        select: {
+            email: true,
+            id: true,
+            isVerified: true,
+            subscribedAt: true,
+            unsubscribedAt: true,
+        }
+    }).catch((error) => {
+        throw new Error("Error getting user to unsubscribe");
+    })
+
+    if (!existingSubscriber) return UnsubscribeResponses.EMAIL_DOES_NOT_EXIST;
+    if (!existingSubscriber.subscribedAt) return UnsubscribeResponses.ALREADY_UNSUBSCRIBED;
+
+    await db.newsletterSubscriber.update({
+        where: {
+            email: existingSubscriber.email
+        },
+        data: {
+            isVerified: true,
+            unsubscribedAt: new Date(),
+            subscribedAt: null
+        }
+    }).catch((error) => {
+        throw new Error("Error unsubscribing user");
+    })
+
+    sendUnsubscriptionConfirmationEmail(existingSubscriber.email, existingSubscriber.id);
 
     return UnsubscribeResponses.UNSUBSCRIBED;
 };

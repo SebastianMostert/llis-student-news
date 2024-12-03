@@ -5,62 +5,84 @@ import { generateVerificationToken } from "@/lib/tokens";
 import { SendCodeResponses } from "@/types";
 import { db } from "@/lib/db";
 
-export async function sendVerificationCode({ email, firstName, lastName }: { email: string, firstName: string, lastName: string }) {
-    // Check if user exists
-    const existingUser_ = await db.user.findUnique({
-        where: {
-            email
-        },
-        select: {
-            id: true,
-            emailVerified: true,
-            email: true,
-            firstName: true,
-            lastName: true,
-            subscribedToNewsletter: true
-        }
-    })
-
-    if (!existingUser_) {
-        const newUser = await db.user.create({
-            data: {
-                email,
-                subscribedToNewsletter: false,
-                firstName,
-                lastName
-            }
-        })
-
-        const verificationToken = await generateVerificationToken(newUser.email);
-
-        await sendVerificationEmail(
-            verificationToken.email,
-            verificationToken.token
-        );
-
-        return SendCodeResponses.CODE_SENT;
-    }
-
-    if (existingUser_.firstName !== firstName || existingUser_.lastName !== lastName) {
-        await db.user.update({
-            where: {
-                id: existingUser_.id
+export async function sendVerificationCode({ email }: { email: string }): Promise<SendCodeResponses> {
+    try {
+        // Fetch user and subscriber details in one query
+        const userAndSubscriber = await db.user.findUnique({
+            where: { email },
+            select: {
+                id: true,
+                emailVerified: true,
+                firstName: true,
+                lastName: true,
+                NewsletterSubscriber: {
+                    select: {
+                        id: true,
+                        isVerified: true,
+                        email: true,
+                    },
+                },
             },
-            data: {
-                firstName,
-                lastName
-            }
         });
+
+        const existingSubscriber = await db.newsletterSubscriber.findUnique({
+            where: { email },
+        });
+
+        // Case 1: Existing user and subscriber
+        if (userAndSubscriber) {
+            const { emailVerified, NewsletterSubscriber } = userAndSubscriber;
+            const currentSubscriber = NewsletterSubscriber.find((subscriber) => subscriber.email === email);
+
+            // Link newsletter subscription if missing
+            if (!currentSubscriber && !existingSubscriber) {
+                await db.newsletterSubscriber.create({
+                    data: {
+                        email,
+                        userId: userAndSubscriber.id,
+                        isVerified: !!emailVerified,
+                    },
+                });
+            }
+
+            if (emailVerified || currentSubscriber?.isVerified || existingSubscriber?.isVerified) {
+                return SendCodeResponses.EMAIL_ALREADY_VERIFIED;
+            }
+
+            // Send verification email
+            await sendVerification({ email });
+            return SendCodeResponses.CODE_SENT;
+        }
+
+        // Case 2: New subscriber (no user record)
+        if (!existingSubscriber) {
+            await db.newsletterSubscriber.create({
+                data: {
+                    email,
+                    isVerified: false,
+                },
+            });
+
+            // Send verification email
+            await sendVerification({ email });
+            return SendCodeResponses.CODE_SENT;
+        }
+
+        // Case 3: Existing unverified subscriber
+        if (!existingSubscriber.isVerified) {
+            await sendVerification({ email });
+            return SendCodeResponses.CODE_SENT;
+        }
+
+        // Fallback: Already verified subscriber
+        return SendCodeResponses.EMAIL_ALREADY_VERIFIED;
+    } catch (error) {
+        console.error("Error in sendVerificationCode:", error);
+        throw new Error("Failed to send verification code.");
     }
+}
 
-    if (existingUser_.emailVerified) return SendCodeResponses.EMAIL_ALREADY_VERIFIED;
-
-    const verificationToken = await generateVerificationToken(existingUser_.email);
-
-    await sendVerificationEmail(
-        verificationToken.email,
-        verificationToken.token
-    );
-
-    return SendCodeResponses.CODE_SENT;
-};
+async function sendVerification({ email }: { email: string }) {
+    const verificationToken = await generateVerificationToken(email);
+    await sendVerificationEmail(verificationToken.email, verificationToken.token);
+}

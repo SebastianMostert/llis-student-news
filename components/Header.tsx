@@ -5,8 +5,17 @@ import SearchBox from './SearchBox'
 import DarkModeButton from './DarkModeButton'
 import SideMenu from './SideMenu'
 import SubscribeBtn from './SubscribeBtn'
+import { auth } from '@/auth'
+import { checkIfSubscribed } from '@/actions/user'
 
-const Header = () => {
+async function Header() {
+  const session = await auth();
+  const user = session?.user;
+
+  const email = user?.email || undefined;
+
+  const isSubscribed = await checkIfSubscribed({ email });
+
   return (
     <header>
       <div className='grid grid-cols-3 p-10 items-center'>
@@ -20,7 +29,7 @@ const Header = () => {
 
         <div className='flex items-center justify-end space-x-2'>
           <DarkModeButton />
-          <SubscribeBtn />
+          <SubscribeBtn userEmail={email} isSubscribed={isSubscribed} />
         </div>
       </div>
 

@@ -6,30 +6,22 @@ import { sendVerificationCode } from '@/actions/sendVerificationCode';
 import { newVerification } from '@/actions/newVerification';
 import { NewVerificationResponses, SendCodeResponses, SubscribeResponses } from '@/types';
 import { subscribe } from '@/actions/subscribe';
-import SignInButtons from '../SignInButtons';
 
 const SubscribeForm = ({ email_ }: { email_?: string }) => {
     const [email, setEmail] = useState(email_ || '');
-    const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
     const [code, setCode] = useState('');
     const [isCodeSent, setIsCodeSent] = useState(false);
     const [isVerified, setIsVerified] = useState(false);
     const [alreadyVerified, setAlreadyVerified] = useState(false);
     const [honeypot, setHoneypot] = useState('');
 
-    // Placeholder: Call backend API to handle subscription
     const handleSubscribe = async () => {
-        // Honeypot validation: If the honeypot field is filled, block the submission
         if (honeypot) {
             console.log('Bot detected');
             return;
         }
 
-        // Call API to send verification code
         const res = await sendVerificationCode({
-            firstName: firstName || "Anonymous",
-            lastName: lastName || "Anonymous",
             email,
         });
 
@@ -44,7 +36,7 @@ const SubscribeForm = ({ email_ }: { email_?: string }) => {
                         setAlreadyVerified(true);
                         break;
                     case SubscribeResponses.EMAIL_DOES_NOT_EXIST:
-                        alert('Email does not exist');
+                        alert('Email does not exist111');
                         break;
                     case SubscribeResponses.EMAIL_NOT_VERIFIED:
                         alert('Email not verified');
@@ -63,19 +55,17 @@ const SubscribeForm = ({ email_ }: { email_?: string }) => {
         }
     };
 
-    // Placeholder: Call backend API to verify code
     const handleVerifyCode = async () => {
-        // Call API to verify the code
         const verified = await newVerification(code);
         if (verified !== NewVerificationResponses.EMAIL_VERIFIED) alert(verified);
-        if (verified == NewVerificationResponses.EMAIL_VERIFIED) {
+        if (verified === NewVerificationResponses.EMAIL_VERIFIED) {
             const res = await subscribe(email);
             switch (res) {
                 case SubscribeResponses.ALREADY_SUBSCRIBED:
                     setAlreadyVerified(true);
                     break;
                 case SubscribeResponses.EMAIL_DOES_NOT_EXIST:
-                    alert('Email does not exist');
+                    alert('Email does not exisssst');
                     break;
                 case SubscribeResponses.EMAIL_NOT_VERIFIED:
                     alert('Email not verified');
@@ -92,7 +82,6 @@ const SubscribeForm = ({ email_ }: { email_?: string }) => {
 
     return (
         <div className="flex flex-col items-center bg-primaryBg-light dark:bg-primaryBg-dark p-6 rounded-md w-full sm:w-96 mx-auto">
-            {/* Honeypot Field (Invisible to users) */}
             <input
                 type="text"
                 name="honeypot"
@@ -107,34 +96,22 @@ const SubscribeForm = ({ email_ }: { email_?: string }) => {
                 <>
                     <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">Subscribe to our Newsletter</h2>
                     <p className="text-gray-600 dark:text-gray-300 mb-6 text-center">
-                        Stay updated with our latest news and updates. Sign Up to subscribe!
+                        Stay updated with our latest news and updates. Sign up to subscribe!
                     </p>
-
-                    {/* First Name and Last Name Fields (Optional) */}
                     <div className="flex flex-col w-full mb-4">
-                        {/* <input
-                            type="text"
-                            value={firstName}
-                            onChange={(e) => setFirstName(e.target.value)}
-                            placeholder="First Name (Optional)"
-                            className="mb-2 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600"
-                        />
-                        <input
-                            type="text"
-                            value={lastName}
-                            onChange={(e) => setLastName(e.target.value)}
-                            placeholder="Last Name (Optional)"
-                            className="mb-2 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600"
-                        />
                         <input
                             type="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             placeholder="Enter your email"
                             className="mb-4 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600"
-                        /> */}
-
-                        <SignInButtons action="subscribe" />
+                        />
+                        <button
+                            onClick={handleSubscribe}
+                            className="px-4 py-2 text-white rounded-md bg-accent-light dark:bg-accent-dark hover:bg-accent-hover-light dark:hover:bg-accent-hover-dark focus:outline-none"
+                        >
+                            Subscribe
+                        </button>
                     </div>
                 </>
             )}
