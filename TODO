@@ -1,0 +1,24 @@
+Add RBAC:
+    The roles have permissions
+    We check for permissions not roles.
+Add Translation:
+    For the site:
+        Using: i18n
+    For Posts
+        Either using: 
+            AI, which would need to be approved by Admins
+            Poster, who will specify the language and can create multiple.
+    For categories
+        Either using: 
+            AI, which would need to be approved by Admins
+            Poster, who will specify the language and can create multiple.
+
+
+Public Pages:
+Create about page
+Create contact page
+
+Admin Pages:
+Overview page of all posts for the admins
+Overview page of all subscribers for the admins
+Page to create new categories
