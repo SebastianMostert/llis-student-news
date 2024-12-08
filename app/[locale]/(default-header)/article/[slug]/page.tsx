@@ -6,10 +6,13 @@ import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
 import remarkGfm from 'remark-gfm'
 import removeMarkdown from "remove-markdown";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
+import { getTranslatedPostDescription, getTranslatedPostTitle } from "@/lib/translations";
 
 export async function generateMetadata({ params }: { params: Promise<{ [key: string]: string | undefined }> }) {
     const t = await getTranslations('ArticlePage');
+    const locale = await getLocale();
+
     const awaitedParams = await params;
     const { slug } = awaitedParams;
 
@@ -25,8 +28,11 @@ export async function generateMetadata({ params }: { params: Promise<{ [key: str
         };
     }
 
+    const translatedTitle = await getTranslatedPostTitle(locale, article.id) || article.title;
+    const translatedDescription = await getTranslatedPostDescription(locale, article.id) || article.content;
+
     // Remove Markdown and limit to 150 characters for the description
-    const plainTextContent = removeMarkdown(article.content).slice(0, 150);
+    const plainTextContent = removeMarkdown(translatedDescription).slice(0, 150);
 
     const fixedImage = {
         image: article.image
@@ -38,24 +44,24 @@ export async function generateMetadata({ params }: { params: Promise<{ [key: str
     }
 
     return {
-        title: article.title,
+        title: translatedTitle,
         description: plainTextContent,
         openGraph: {
-            title: article.title,
+            title: translatedTitle,
             description: plainTextContent,
             images: [
                 {
                     url: fixedImage.image?.content,
                     width: 1200,
                     height: 630,
-                    alt: article.title,
+                    alt: translatedTitle,
                 },
             ],
             type: "article",
         },
         twitter: {
             card: "summary_large_image",
-            title: article.title,
+            title: translatedTitle,
             description: plainTextContent,
             images: [fixedImage.image?.content],
         },
@@ -64,6 +70,8 @@ export async function generateMetadata({ params }: { params: Promise<{ [key: str
 
 async function ArticlePage({ params }: { params: Promise<{ [key: string]: string | undefined }> }) {
     const t = await getTranslations('ArticlePage');
+    const locale = await getLocale();
+
     const awaitedParams = await params;
     const { slug } = awaitedParams;
 
@@ -77,6 +85,9 @@ async function ArticlePage({ params }: { params: Promise<{ [key: string]: string
     if (!article) {
         return <ArticleNotFound />;
     }
+
+    const translatedTitle = await getTranslatedPostTitle(locale, article.id) || article.title;
+    const translatedDescription = await getTranslatedPostDescription(locale, article.id) || article.content;
 
     const fixedImage = {
         image: article.image
@@ -95,13 +106,13 @@ async function ArticlePage({ params }: { params: Promise<{ [key: string]: string
                 {fixedImage.image && (
                     <img
                         src={`data:${fixedImage.image.mimeType};base64,${fixedImage.image.content}`}
-                        alt={article.title}
+                        alt={translatedTitle}
                         className="h-50 max-w-md mx-auto md:max-w-lg lg:max-w-xl object-cover rounded-lg shadow-md"
                     />
                 )}
 
                 <div className="px-10">
-                    <h1 className="headerTitle px-0 no-underline pb-2">{article.title}</h1>
+                    <h1 className="headerTitle px-0 no-underline pb-2">{translatedTitle}</h1>
 
                     <div className="flex divide-x-2 space-x-4">
                         <h2 className="font-bold">{t('by', { name: authorName })}</h2>
@@ -110,7 +121,7 @@ async function ArticlePage({ params }: { params: Promise<{ [key: string]: string
 
                     {/* Render the Markdown content */}
                     <ReactMarkdown rehypePlugins={[rehypeRaw]} remarkPlugins={[remarkGfm]} className="prose dark:prose-invert pt-4">
-                        {article.content}
+                        {translatedDescription}
                     </ReactMarkdown>
                 </div>
             </section>

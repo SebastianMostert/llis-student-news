@@ -143,3 +143,16 @@ model Image {
   createdAt DateTime @default(now())
   Post      Post[]
 }
+
+model Translation {
+  id     String @id @default(auto()) @map("_id") @db.ObjectId
+  locale String
+  key    String
+
+  value String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([locale, key]) // Ensure uniqueness for locale + key pair
+}

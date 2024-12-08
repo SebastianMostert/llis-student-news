@@ -94,5 +94,23 @@
     "Metadata": {
         "title": "Keeping up with LLIS",
         "description": "The LLIS newssite"
+    },
+    "NewsCategoryPage": {
+        "title": "News - {category}",
+        "description": "News about {category}",
+        "noCategoryFound": "No category found"
+    },
+    "Footer": {
+        "quickLinks": "Quick Links",
+        "privacyPolicy": "Privacy Policy",
+        "contactUs": "Contact Us",
+        "newsletter": "Newsletter",
+        "newsletterPlaceholder": "Enter email",
+        "subscribe": "Subscribe",
+        "followUs": "Follow Us",
+        "address": "2 rue Victor Ferrant, 6122 Junglinster",
+        "phone": "+1 234 567 890",
+        "language": "Language",
+        "copyright": "&copy; {year} Keeping Up With LLIS. All Rights Reserved."
     }
 }

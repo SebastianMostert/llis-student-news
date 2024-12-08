@@ -13,6 +13,8 @@ import rehypeRaw from "rehype-raw";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 
+// TODO: Add translation for categories
+
 // Dynamically import MDEditor
 const MDEditor = dynamic(() => import("@uiw/react-md-editor"), { ssr: false });
 

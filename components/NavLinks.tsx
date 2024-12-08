@@ -9,6 +9,7 @@ import { useTranslations } from 'next-intl';
 
 const NavLinks = () => {
     const t = useTranslations('NavLinks');
+
     const pathname = usePathname();
     const [categories, setCategories] = useState<Category[]>([]);
     const [isLoading, setIsLoading] = useState(true);
