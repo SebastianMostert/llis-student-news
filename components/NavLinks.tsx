@@ -5,8 +5,10 @@ import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { getCategories } from '@/actions/categories';
 import { Category } from '@prisma/client';
+import { useTranslations } from 'next-intl';
 
 const NavLinks = () => {
+    const t = useTranslations('NavLinks');
     const pathname = usePathname();
     const [categories, setCategories] = useState<Category[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -32,7 +34,7 @@ const NavLinks = () => {
     return (
         <nav className='grid grid-cols-4 md:grid-cols-7 text-xs md:text-sm gap-4 pb-10 max-w-6xl mx-auto border-b'>
             {isLoading ? (
-                <div className="navLink">Loading...</div>
+                <div className="navLink">{t('loading')}</div>
             ) : (
                 categories.map((category) => (
                     <NavLink

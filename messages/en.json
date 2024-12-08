@@ -1,0 +1,98 @@
+{
+    "ArticlePage": {
+        "articleNotFound": "Article not found",
+        "articleNotFoundDescription": "The requested article could not be found.",
+        "loading": "Loading...",
+        "by": "by {name}"
+    },
+    "SearchPage": {
+        "resultsFor": "Search results for: {term}"
+    },
+    "NewArticle": {
+        "userNotFound": "User not found"
+    },
+    "SubscribePage": {
+        "subscribedTitle": "You're Subscribed!",
+        "subscribedMessage": "Thank you for subscribing. We're excited to share our updates with you!",
+        "alreadySubscribedTitle": "You're already subscribed!",
+        "alreadySubscribedMessage": "Thank you for subscribing. We're excited to share our updates with you!"
+    },
+    "UnsubscribePage": {
+        "missingId": "Missing ID parameter",
+        "emailNotFound": "The email you are trying to unsubscribe does not exist.",
+        "alreadyUnsubscribed": "You have already unsubscribed.",
+        "successfullyUnsubscribed": "You have successfully unsubscribed.",
+        "goToHomepage": "Go to Homepage",
+        "thankYou": "Thank you for updating your preferences. If this was a mistake, you can resubscribe at any time.",
+        "resubscribe": "If you want to resubscribe, you can do so at any time on our website's homepage!",
+        "unsubscriptionFailed": "Unsubscription Failed",
+        "couldNotProcess": "We could not process your unsubscription. Please try again later or contact support.",
+        "error": "Error Message: {error}",
+        "invalidRequest": "Invalid Request",
+        "informationMissing": "It seems like we didn't receive the necessary information to process your unsubscription.",
+        "errorOccurred": "An Error Occurred",
+        "processingError": "We encountered an issue while processing your request. Please try again later.",
+        "unknownStatus": "Unknown Status",
+        "unexpectedIssue": "We encountered an unexpected issue. Please try again later."
+    },
+    "SubscribeForm": {
+        "subscribeToNewsletter": "Subscribe to our Newsletter",
+        "subscribeDescription": "Stay updated with our latest news and updates. Sign up to subscribe!",
+        "subscribe": "Subscribe",
+        "verifyEmail": "Verify Your Email",
+        "codeSent": "We've sent a 6-digit verification code to {email}",
+        "verifyCode": "Verify Code",
+        "subscribed": "You're Subscribed!",
+        "thankYou": "Thank you for subscribing. We're excited to share our updates with you!",
+        "alreadySubscribed": "You're already subscribed!",
+        "enterEmail": "Enter your email",
+        "enterCode": "Enter your code"
+    },
+    "ArticleCreationForm": {
+        "title": "Create New Article",
+        "category": "Category",
+        "selectACategory": "Select a category",
+        "enterArticleTitle": "Enter article title",
+        "savedAsSlug": "Article will be saved as \"{slug}\"",
+        "createArticle": "Create Article"
+    },
+    "ArticleNotFound": {
+        "articleNotFound": "Article Not Found"
+    },
+    "MediaSelectorPopUp": {
+        "imageUsedInPosts": "This image is used in {usageCount} post(s). Are you sure you want to delete it?",
+        "deleteMedia": "Are you sure you want to delete this media?",
+        "selectMedia": "Select Media",
+        "uploading": "Uploading...",
+        "delete": "Delete",
+        "cancel": "Cancel"
+    },
+    "NavLinks": {
+        "loading": "Loading..."
+    },
+    "ReadMoreButton": {
+        "readMore": "Read More"
+    },
+    "SearchBox": {
+        "placeholder": "Search keywords...",
+        "search": "Search"
+    },
+    "SideMenu": {
+        "signOut": "Log Out",
+        "signIn": "Sign In"
+    },
+    "SubscribeBtn": {
+        "authError": "Auth Error. Contact the site owner. Error: Missing User Email with isSubscribed: {isSubscribed}",
+        "subscribeNow": "Subscribe Now",
+        "unsubscribeNow": "Unsubscribe Now"
+    },
+    "LocaleSwitcher": {
+        "label": "Change language",
+        "en": "English",
+        "de": "Deutsch"
+    },
+    "Metadata": {
+        "title": "Keeping up with LLIS",
+        "description": "The LLIS newssite"
+    }
+}

@@ -1,5 +1,6 @@
 import { unsubscribe } from '@/actions/unsubscribe';
 import { UnsubscribeResponses } from '@/types';
+import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 
 enum Status {
@@ -11,6 +12,8 @@ enum Status {
 }
 
 async function SubscribePage({ searchParams }: { searchParams: Promise<{ [key: string]: string | undefined }> }) {
+    const t = await getTranslations('UnsubscribePage');
+
     const awaitedSearchParams = await searchParams;
     const id = awaitedSearchParams.id;
 
@@ -19,7 +22,7 @@ async function SubscribePage({ searchParams }: { searchParams: Promise<{ [key: s
 
     if (!id) {
         status = Status.MISSING_ID;
-        message = 'Missing ID parameter';
+        message = t("missingId");
     }
 
     if (id) {
@@ -29,15 +32,15 @@ async function SubscribePage({ searchParams }: { searchParams: Promise<{ [key: s
             switch (result) {
                 case UnsubscribeResponses.EMAIL_DOES_NOT_EXIST:
                     status = Status.FAILURE;
-                    message = "The email you are trying to unsubscribe does not exist.";
+                    message = t("emailNotFound");
                     break;
                 case UnsubscribeResponses.ALREADY_UNSUBSCRIBED:
                     status = Status.ALREADY_UNSUBSCRIBED;
-                    message = "You have already unsubscribed.";
+                    message = t("alreadyUnsubscribed");
                     break;
                 case UnsubscribeResponses.UNSUBSCRIBED:
                     status = Status.UNSUBSCRIBED;
-                    message = "You have successfully unsubscribed.";
+                    message = t("successfullyUnsubscribed");
                     break;
             }
         } catch (error: any) {
@@ -50,7 +53,7 @@ async function SubscribePage({ searchParams }: { searchParams: Promise<{ [key: s
 
     const HomeButton = () => (
         <Link href="/" className="mt-4 inline-block px-4 py-2 text-white bg-accent-light dark:bg-accent-dark hover:bg-accent-hover-light dark:hover:bg-accent-hover-dark rounded">
-            Go to Homepage
+            {t("goToHomepage")}
         </Link>
     );
 
@@ -58,9 +61,9 @@ async function SubscribePage({ searchParams }: { searchParams: Promise<{ [key: s
         case Status.UNSUBSCRIBED:
             content = (
                 <div className="p-6 rounded-lg shadow-md primaryBg-light dark:primaryBg-dark">
-                    <h1 className="text-2xl font-bold accent-light dark:accent-dark mb-4">You have successfully unsubscribed.</h1>
+                    <h1 className="text-2xl font-bold accent-light dark:accent-dark mb-4">{t("successfullyUnsubscribed")}</h1>
                     <p className="text-lg secondaryBg-light dark:secondaryBg-dark">
-                        Thank you for updating your preferences. If this was a mistake, you can resubscribe at any time.
+                        {t("thankYou")}
                     </p>
                     <HomeButton />
                 </div>
@@ -69,9 +72,9 @@ async function SubscribePage({ searchParams }: { searchParams: Promise<{ [key: s
         case Status.ALREADY_UNSUBSCRIBED:
             content = (
                 <div className="p-6 rounded-lg shadow-md primaryBg-light dark:primaryBg-dark">
-                    <h1 className="text-2xl font-bold accent-light dark:accent-dark mb-4">You have already unsubscribed.</h1>
+                    <h1 className="text-2xl font-bold accent-light dark:accent-dark mb-4">{t("alreadyUnsubscribed")}</h1>
                     <p className="text-lg secondaryBg-light dark:secondaryBg-dark">
-                        If you want to resubscribe, you can do so at any time on our website's homepage!
+                        {t("resubscribe")}
                     </p>
                     <HomeButton />
                 </div>
@@ -80,11 +83,11 @@ async function SubscribePage({ searchParams }: { searchParams: Promise<{ [key: s
         case Status.FAILURE:
             content = (
                 <div className="p-6 rounded-lg shadow-md primaryBg-light dark:primaryBg-dark">
-                    <h1 className="text-2xl font-bold text-red-500 mb-4">Unsubscription Failed</h1>
+                    <h1 className="text-2xl font-bold text-red-500 mb-4">{t("unsubscriptionFailed")}</h1>
                     <p className="text-lg secondaryBg-light dark:secondaryBg-dark">
-                        We could not process your unsubscription. Please try again later or contact support.
+                        {t("couldNotProcess")}
                     </p>
-                    <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">Error Message: {message}</p>
+                    <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">{t("error", { message })}</p>
                     <HomeButton />
                 </div>
             );
@@ -92,9 +95,9 @@ async function SubscribePage({ searchParams }: { searchParams: Promise<{ [key: s
         case Status.MISSING_ID:
             content = (
                 <div className="p-6 rounded-lg shadow-md primaryBg-light dark:primaryBg-dark">
-                    <h1 className="text-2xl font-bold text-yellow-500 mb-4">Invalid Request</h1>
+                    <h1 className="text-2xl font-bold text-yellow-500 mb-4">{t("invalidRequest")}</h1>
                     <p className="text-lg secondaryBg-light dark:secondaryBg-dark">
-                        It seems like we didn't receive the necessary information to process your unsubscription.
+                        {t("informationMissing")}
                     </p>
                     <HomeButton />
                 </div>
@@ -103,11 +106,11 @@ async function SubscribePage({ searchParams }: { searchParams: Promise<{ [key: s
         case Status.ERROR:
             content = (
                 <div className="p-6 rounded-lg shadow-md primaryBg-light dark:primaryBg-dark">
-                    <h1 className="text-2xl font-bold text-red-500 mb-4">An Error Occurred</h1>
+                    <h1 className="text-2xl font-bold text-red-500 mb-4">{t("errorOccurred")}</h1>
                     <p className="text-lg secondaryBg-light dark:secondaryBg-dark">
-                        We encountered an issue while processing your request. Please try again later.
+                        {t("processingError")}
                     </p>
-                    <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">Error Message: {message}</p>
+                    <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">{t("error", { message })}</p>
                     <HomeButton />
                 </div>
             );
@@ -115,9 +118,9 @@ async function SubscribePage({ searchParams }: { searchParams: Promise<{ [key: s
         default:
             content = (
                 <div className="p-6 rounded-lg shadow-md primaryBg-light dark:primaryBg-dark">
-                    <h1 className="text-2xl font-bold text-gray-500 mb-4">Unknown Status</h1>
+                    <h1 className="text-2xl font-bold text-gray-500 mb-4">{t("unknownStatus")}</h1>
                     <p className="text-lg secondaryBg-light dark:secondaryBg-dark">
-                        We encountered an unexpected issue. Please try again later.
+                        {t("unexpectedIssue")}
                     </p>
                     <HomeButton />
                 </div>

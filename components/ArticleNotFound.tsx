@@ -1,8 +1,11 @@
+import { getTranslations } from 'next-intl/server';
 import React from 'react'
 
-const ArticleNotFound = () => {
+async function ArticleNotFound() {
+    const t = await getTranslations('ArticleNotFound');
+
     return (
-        <div>Article Not Found</div>
+        <div>{t('articleNotFound')}</div>
     )
 }
 

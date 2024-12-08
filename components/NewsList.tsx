@@ -1,6 +1,5 @@
 import React from 'react'
 import Article from './Article'
-import { Post, Prisma } from '@prisma/client'
 import { PostWithAuthor } from '@/types';
 
 type Props = {

@@ -13,7 +13,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div>
+    <div className="max-w-6xl mx-auto">
       <header>
         <div className='p-10 items-center'>
           <Link href='/' prefetch={false}>

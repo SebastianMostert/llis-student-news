@@ -2,8 +2,11 @@ import { subscribeWithId } from '@/actions/subscribe';
 import SubscribeForm from '@/components/newsletter/subscribeForm';
 import { CheckCircleIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline';
 import { SubscribeResponses } from '@/types';
+import { getTranslations } from 'next-intl/server';
 
 export default async function SubscribePage({ searchParams }: { searchParams: Promise<{ [key: string]: string | undefined }> }) {
+    const t = await getTranslations('SubscribePage');
+
     const awaitedParams = await searchParams;
     const resubscribeID = awaitedParams?.id;
 
@@ -45,9 +48,9 @@ export default async function SubscribePage({ searchParams }: { searchParams: Pr
             {isVerified && !isAlreadyVerified && (
                 <>
                     <CheckCircleIcon className="h-12 w-12 text-green-500 mb-4" />
-                    <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">You're Subscribed!</h2>
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{t("subscribedTitle")}</h2>
                     <p className="text-gray-600 dark:text-gray-300 text-center mt-2">
-                        Thank you for subscribing. We're excited to share our updates with you!
+                        {t("subscribedMessage")}
                     </p>
                 </>
             )}
@@ -55,9 +58,9 @@ export default async function SubscribePage({ searchParams }: { searchParams: Pr
             {isAlreadyVerified && (
                 <>
                     <ExclamationCircleIcon className="h-12 w-12 text-orange-500 mb-4" />
-                    <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">You're already subscribed!</h2>
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{t("alreadySubscribedTitle")}</h2>
                     <p className="text-gray-600 dark:text-gray-300 text-center mt-2">
-                        Thank you for subscribing. We're excited to share our updates with you!
+                        {t("alreadySubscribedMessage")}
                     </p>
                 </>
             )}

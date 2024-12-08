@@ -6,9 +6,10 @@ import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
 import remarkGfm from 'remark-gfm'
 import removeMarkdown from "remove-markdown";
-import Image from "next/image";
+import { getTranslations } from "next-intl/server";
 
 export async function generateMetadata({ params }: { params: Promise<{ [key: string]: string | undefined }> }) {
+    const t = await getTranslations('ArticlePage');
     const awaitedParams = await params;
     const { slug } = awaitedParams;
 
@@ -19,18 +20,22 @@ export async function generateMetadata({ params }: { params: Promise<{ [key: str
 
     if (!article) {
         return {
-            title: "Article not found",
-            description: "The requested article could not be found.",
+            title: t('articleNotFound'),
+            description: t('articleNotFoundDescription'),
         };
     }
 
     // Remove Markdown and limit to 150 characters for the description
     const plainTextContent = removeMarkdown(article.content).slice(0, 150);
 
-    // Generate a data URL for the image if available
-    const imageUrl = article.image
-        ? `data:${article.image.mimeType};base64,${article.image.content}`
-        : "/default-image.png"; // Replace with your default image path
+    const fixedImage = {
+        image: article.image
+            ? {
+                ...article.image,
+                content: Buffer.from(article.image.content).toString("base64"),
+            }
+            : null,
+    }
 
     return {
         title: article.title,
@@ -40,7 +45,7 @@ export async function generateMetadata({ params }: { params: Promise<{ [key: str
             description: plainTextContent,
             images: [
                 {
-                    url: imageUrl,
+                    url: fixedImage.image?.content,
                     width: 1200,
                     height: 630,
                     alt: article.title,
@@ -52,17 +57,17 @@ export async function generateMetadata({ params }: { params: Promise<{ [key: str
             card: "summary_large_image",
             title: article.title,
             description: plainTextContent,
-            images: [imageUrl],
+            images: [fixedImage.image?.content],
         },
     };
 }
 
-
 async function ArticlePage({ params }: { params: Promise<{ [key: string]: string | undefined }> }) {
+    const t = await getTranslations('ArticlePage');
     const awaitedParams = await params;
     const { slug } = awaitedParams;
 
-    if (typeof slug !== "string") return <div>Loading...</div>;
+    if (typeof slug !== "string") return <div>{t('loading')}</div>;
 
     const article: PostWithAuthor | null = await db.post.findUnique({
         where: { slug },
@@ -81,7 +86,9 @@ async function ArticlePage({ params }: { params: Promise<{ [key: string]: string
             }
             : null,
     }
-    
+
+    const authorName = `${article.author.firstName} ${article.author.lastName}`
+
     return (
         <article>
             <section className="flex flex-col lg:flex-row pb-24 px-0 lg:px-10">
@@ -97,7 +104,7 @@ async function ArticlePage({ params }: { params: Promise<{ [key: string]: string
                     <h1 className="headerTitle px-0 no-underline pb-2">{article.title}</h1>
 
                     <div className="flex divide-x-2 space-x-4">
-                        <h2 className="font-bold">By {article.author.firstName} {article.author.lastName}</h2>
+                        <h2 className="font-bold">{t('by', { name: authorName })}</h2>
                         <p className="pl-4"><LiveTimestamp time={article.createdAt} /></p>
                     </div>
 

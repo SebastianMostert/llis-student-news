@@ -5,11 +5,13 @@ import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { IoAddCircleOutline } from 'react-icons/io5';
 import imageCompression from 'browser-image-compression';
+import { useTranslations } from 'next-intl';
 
 // Maximum file size limit in bytes (e.g., 5MB)
 const FILE_MAX_SIZE = 5 * 1024 * 1024; // 5 MB
 
 const MediaSelectorPopUp = ({ onSelect, selected, selectedId }: { onSelect: (id: string, url: string) => void; selected?: string; selectedId?: string }) => {
+    const t = useTranslations('MediaSelectorPopUp');
     const [mediaFiles, setMediaFiles] = useState<TransformedImage[]>([]);
     const [newFile, setNewFile] = useState<File | null>(null);
     const [isUploading, setIsUploading] = useState(false);
@@ -71,15 +73,13 @@ const MediaSelectorPopUp = ({ onSelect, selected, selectedId }: { onSelect: (id:
             const usageCount = await checkImageUsage(id);
 
             if (usageCount > 0) {
-                const confirmDelete = window.confirm(
-                    `This image is used in ${usageCount} post(s). Are you sure you want to delete it?`
-                );
+                const confirmDelete = window.confirm(t('imageUsedInPosts', { usageCount }));
 
                 if (!confirmDelete) {
                     return; // Cancel the deletion if the user doesn't confirm
                 }
             } else {
-                const confirmDelete = window.confirm('Are you sure you want to delete this media?');
+                const confirmDelete = window.confirm(t('deleteMedia'));
                 if (!confirmDelete) return; // Cancel the deletion if the user doesn't confirm
             }
 
@@ -104,7 +104,7 @@ const MediaSelectorPopUp = ({ onSelect, selected, selectedId }: { onSelect: (id:
     return (
         <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
             <div className="bg-primaryBg-light dark:bg-primaryBg-dark rounded-lg shadow-lg w-3/4 max-w-lg p-6">
-                <h2 className="text-xl font-semibold mb-4">Select Media</h2>
+                <h2 className="text-xl font-semibold mb-4">{t('selectMedia')}</h2>
 
                 {/* Media files grid */}
                 <div className="grid grid-cols-3 gap-4">
@@ -147,7 +147,7 @@ const MediaSelectorPopUp = ({ onSelect, selected, selectedId }: { onSelect: (id:
                 />
 
                 {isUploading && (
-                    <div className="mt-4 text-center text-gray-600 dark:text-gray-300">Uploading...</div>
+                    <div className="mt-4 text-center text-gray-600 dark:text-gray-300">{t('uploading')}</div>
                 )}
 
                 {contextMenu && (
@@ -160,16 +160,16 @@ const MediaSelectorPopUp = ({ onSelect, selected, selectedId }: { onSelect: (id:
                             className="block w-full text-left px-4 py-2 hover:bg-gray-200 dark:hover:bg-gray-700"
                             onClick={() => handleDelete(contextMenu.id)}
                         >
-                            Delete
+                            {t('delete')}
                         </button>
                     </div>
                 )}
-                
+
                 <button
                     className="mt-4 w-full bg-accent-light dark:bg-accent-dark hover:bg-accent-hover-light dark:hover:bg-accent-hover-dark text-white py-2 px-4 rounded-lg"
                     onClick={() => onSelect(selectedId || '', selected || '')}
                 >
-                    Cancel
+                    {t('cancel')}
                 </button>
             </div>
         </div>

@@ -4,11 +4,13 @@ import React, { useState } from 'react';
 import ModalSubscribe from './ModalSubscribe';
 import { unsubscribeWithEmail } from '@/actions/unsubscribe';
 import { UnsubscribeResponses } from '@/types';
+import { useTranslations } from 'next-intl';
 
 const SubscribeBtn = ({ userEmail, isSubscribed }: { userEmail?: string; isSubscribed: boolean }) => {
+    const t = useTranslations('SubscribeBtn');
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    if (userEmail == undefined && isSubscribed) return <div>Auth Error. Contact the site owner. Error: Missing User Email with isSubscribed: {isSubscribed}</div>
+    if (userEmail == undefined && isSubscribed) return <div>{t('authError', { isSubscribed })}</div>
 
     const handleClick = async () => {
         if (!isSubscribed) setIsModalOpen((prev) => !prev);
@@ -39,7 +41,7 @@ const SubscribeBtn = ({ userEmail, isSubscribed }: { userEmail?: string; isSubsc
                 onClick={handleClick}
                 className="hidden md:inline bg-accent-light text-white px-4 lg:px-8 py-2 lg:py-4 rounded-full dark:bg-accent-dark"
             >
-                {isSubscribed ? 'Unsubscribe' : 'Subscribe'} Now
+                {isSubscribed ? t('unsubscribeNow') : t('subscribeNow')}
             </button>
 
             {/* Modal Overlay */}

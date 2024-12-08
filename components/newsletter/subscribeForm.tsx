@@ -6,8 +6,11 @@ import { sendVerificationCode } from '@/actions/sendVerificationCode';
 import { newVerification } from '@/actions/newVerification';
 import { NewVerificationResponses, SendCodeResponses, SubscribeResponses } from '@/types';
 import { subscribe } from '@/actions/subscribe';
+import { useTranslations } from 'next-intl';
 
 const SubscribeForm = ({ email_ }: { email_?: string }) => {
+    const t = useTranslations('SubscribeForm');
+
     const [email, setEmail] = useState(email_ || '');
     const [code, setCode] = useState('');
     const [isCodeSent, setIsCodeSent] = useState(false);
@@ -16,15 +19,11 @@ const SubscribeForm = ({ email_ }: { email_?: string }) => {
     const [honeypot, setHoneypot] = useState('');
 
     const handleSubscribe = async () => {
-        if (honeypot) {
-            console.log('Bot detected');
-            return;
-        }
+        if (honeypot) return;
 
-        const res = await sendVerificationCode({
-            email,
-        });
+        const res = await sendVerificationCode({ email });
 
+        // TODO: Remove alerts in place of toast
         switch (res) {
             case SendCodeResponses.CODE_SENT:
                 setIsCodeSent(true);
@@ -36,7 +35,7 @@ const SubscribeForm = ({ email_ }: { email_?: string }) => {
                         setAlreadyVerified(true);
                         break;
                     case SubscribeResponses.EMAIL_DOES_NOT_EXIST:
-                        alert('Email does not exist111');
+                        alert('Email does not exist.');
                         break;
                     case SubscribeResponses.EMAIL_NOT_VERIFIED:
                         alert('Email not verified');
@@ -94,23 +93,23 @@ const SubscribeForm = ({ email_ }: { email_?: string }) => {
 
             {!isCodeSent && !isVerified && !alreadyVerified && (
                 <>
-                    <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">Subscribe to our Newsletter</h2>
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">{t("subscribeToNewsletter")}</h2>
                     <p className="text-gray-600 dark:text-gray-300 mb-6 text-center">
-                        Stay updated with our latest news and updates. Sign up to subscribe!
+                        {t("subscribeDescription")}
                     </p>
                     <div className="flex flex-col w-full mb-4">
                         <input
                             type="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            placeholder="Enter your email"
+                            placeholder={t("enterEmail")}
                             className="mb-4 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600"
                         />
                         <button
                             onClick={handleSubscribe}
                             className="px-4 py-2 text-white rounded-md bg-accent-light dark:bg-accent-dark hover:bg-accent-hover-light dark:hover:bg-accent-hover-dark focus:outline-none"
                         >
-                            Subscribe
+                            {t("subscribe")}
                         </button>
                     </div>
                 </>
@@ -118,9 +117,9 @@ const SubscribeForm = ({ email_ }: { email_?: string }) => {
 
             {isCodeSent && !isVerified && !alreadyVerified && (
                 <>
-                    <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">Verify Your Email</h2>
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">{t("verifyEmail")}</h2>
                     <p className="text-gray-600 dark:text-gray-300 mb-6 text-center">
-                        We've sent a 6-digit verification code to <span className="font-semibold">{email}</span>.
+                        {t("verifyEmail", { email })}
                     </p>
                     <div className="flex items-center w-full mb-4">
                         <input
@@ -128,7 +127,7 @@ const SubscribeForm = ({ email_ }: { email_?: string }) => {
                             value={code}
                             onChange={(e) => setCode(e.target.value)}
                             maxLength={6}
-                            placeholder="Enter your code"
+                            placeholder={t("enterCode")}
                             className="flex-1 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600"
                         />
                     </div>
@@ -136,7 +135,7 @@ const SubscribeForm = ({ email_ }: { email_?: string }) => {
                         onClick={handleVerifyCode}
                         className="px-4 py-2 text-white rounded-md bg-accent-light dark:bg-accent-dark hover:bg-accent-hover-light dark:hover:bg-accent-hover-dark focus:outline-none"
                     >
-                        Verify Code
+                        {t("verifyCode")}
                     </button>
                 </>
             )}
@@ -144,9 +143,9 @@ const SubscribeForm = ({ email_ }: { email_?: string }) => {
             {isVerified && !alreadyVerified && (
                 <>
                     <CheckCircleIcon className="h-12 w-12 text-green-500 mb-4" />
-                    <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">You're Subscribed!</h2>
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{t("subscribed")}</h2>
                     <p className="text-gray-600 dark:text-gray-300 text-center mt-2">
-                        Thank you for subscribing. We're excited to share our updates with you!
+                        {t("thankYou")}
                     </p>
                 </>
             )}
@@ -154,9 +153,9 @@ const SubscribeForm = ({ email_ }: { email_?: string }) => {
             {alreadyVerified && (
                 <>
                     <ExclamationCircleIcon className="h-12 w-12 text-orange-500 mb-4" />
-                    <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">You're already subscribed!</h2>
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{t("alreadySubscribed")}</h2>
                     <p className="text-gray-600 dark:text-gray-300 text-center mt-2">
-                        Thank you for subscribing. We're excited to share our updates with you!
+                        {t("thankYou")}
                     </p>
                 </>
             )}

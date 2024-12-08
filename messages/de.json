@@ -1,0 +1,98 @@
+{
+    "ArticlePage": {
+        "articleNotFound": "Artikel nicht gefunden",
+        "articleNotFoundDescription": "Der angeforderte Artikel konnte nicht gefunden werden.",
+        "loading": "Laden...",
+        "by": "von {name}"
+    },
+    "SearchPage": {
+        "resultsFor": "Suchergebnisse für: {term}"
+    },
+    "NewArticle": {
+        "userNotFound": "Benutzer nicht gefunden"
+    },
+    "SubscribePage": {
+        "subscribedTitle": "Sie sind abonniert!",
+        "subscribedMessage": "Vielen Dank für Ihr Abonnement. Wir freuen uns, unsere Neuigkeiten mit Ihnen zu teilen!",
+        "alreadySubscribedTitle": "Sie sind bereits abonniert!",
+        "alreadySubscribedMessage": "Vielen Dank für Ihr Abonnement. Wir freuen uns, unsere Neuigkeiten mit Ihnen zu teilen!"
+    },
+    "UnsubscribePage": {
+        "missingId": "Fehlender ID-Parameter",
+        "emailNotFound": "Die E-Mail, die Sie abmelden möchten, existiert nicht.",
+        "alreadyUnsubscribed": "Sie haben sich bereits abgemeldet.",
+        "successfullyUnsubscribed": "Sie haben sich erfolgreich abgemeldet.",
+        "goToHomepage": "Zur Startseite",
+        "thankYou": "Vielen Dank, dass Sie Ihre Einstellungen aktualisiert haben. Wenn dies ein Fehler war, können Sie sich jederzeit erneut anmelden.",
+        "resubscribe": "Wenn Sie sich erneut anmelden möchten, können Sie dies jederzeit auf der Startseite unserer Website tun!",
+        "unsubscriptionFailed": "Abmeldung fehlgeschlagen",
+        "couldNotProcess": "Wir konnten Ihre Abmeldung nicht verarbeiten. Bitte versuchen Sie es später erneut oder kontaktieren Sie den Support.",
+        "error": "Fehlermeldung: {error}",
+        "invalidRequest": "Ungültige Anfrage",
+        "informationMissing": "Es scheint, als hätten wir nicht die notwendigen Informationen erhalten, um Ihre Abmeldung zu bearbeiten.",
+        "errorOccurred": "Ein Fehler ist aufgetreten",
+        "processingError": "Wir haben ein Problem bei der Verarbeitung Ihrer Anfrage festgestellt. Bitte versuchen Sie es später erneut.",
+        "unknownStatus": "Unbekannter Status",
+        "unexpectedIssue": "Wir haben ein unerwartetes Problem festgestellt. Bitte versuchen Sie es später erneut."
+    },
+    "SubscribeForm": {
+        "subscribeToNewsletter": "Abonnieren Sie unseren Newsletter",
+        "subscribeDescription": "Bleiben Sie mit unseren neuesten Nachrichten und Updates auf dem Laufenden. Melden Sie sich an, um zu abonnieren!",
+        "subscribe": "Abonnieren",
+        "verifyEmail": "Verifizieren Sie Ihre E-Mail",
+        "codeSent": "Wir haben einen 6-stelligen Bestätigungscode an {email} gesendet",
+        "verifyCode": "Code verifizieren",
+        "subscribed": "Sie sind abonniert!",
+        "thankYou": "Vielen Dank für Ihr Abonnement. Wir freuen uns, unsere Neuigkeiten mit Ihnen zu teilen!",
+        "alreadySubscribed": "Sie sind bereits abonniert!",
+        "enterEmail": "Geben Sie Ihre E-Mail-Adresse ein",
+        "enterCode": "Geben Sie Ihren Code ein"
+    },
+    "ArticleCreationForm": {
+        "title": "Artikel erstellen",
+        "category": "Kategorie",
+        "selectACategory": "Wählen Sie eine Kategorie",
+        "enterArticleTitle": "Geben Sie den Titel des Artikels ein",
+        "savedAsSlug": "Artikel wird gespeichert als \"{slug}\"",
+        "createArticle": "Artikel erstellen"
+    },
+    "ArticleNotFound": {
+        "articleNotFound": "Artikel nicht gefunden"
+    },
+    "MediaSelectorPopUp": {
+        "imageUsedInPosts": "Dieses Bild wird in {usageCount} Beitrag(en) verwendet. Möchten Sie es wirklich löschen?",
+        "deleteMedia": "Möchten Sie dieses Medium wirklich löschen?",
+        "selectMedia": "Medium auswählen",
+        "uploading": "Hochladen...",
+        "delete": "Löschen",
+        "cancel": "Abbrechen"
+    },
+    "NavLinks": {
+        "loading": "Laden..."
+    },
+    "ReadMoreButton": {
+        "readMore": "Weiterlesen"
+    },
+    "SearchBox": {
+        "placeholder": "Suchbegriffe eingeben...",
+        "search": "Suchen"
+    },
+    "SideMenu": {
+        "signOut": "Abmelden",
+        "signIn": "Anmelden"
+    },
+    "SubscribeBtn": {
+        "authError": "Authentifizierungsfehler. Kontaktieren Sie den Seitenbetreiber. Fehler: Fehlende Benutzer-E-Mail mit isSubscribed: {isSubscribed}",
+        "subscribeNow": "Jetzt abonnieren",
+        "unsubscribeNow": "Jetzt abmelden"
+    },
+    "LocaleSwitcher": {
+        "label": "Sprache wechseln",
+        "en": "English",
+        "de": "Deutsch"
+    },
+    "Metadata": {
+        "title": "Keeping up with LLIS (DE)",
+        "description": "Die LLIS newssite"
+    }
+}

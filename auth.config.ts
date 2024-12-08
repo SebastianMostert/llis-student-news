@@ -80,6 +80,5 @@ export default {
         strategy: "jwt", // Use "jwt" or "database" as per your configuration
         maxAge: 30 * 60, // Session will expire after 30 minutes of inactivity
         updateAge: 5 * 60, // Update session age only if the user is active within 5 minutes
-    },
-    debug: true,
+    }
 } satisfies NextAuthConfig

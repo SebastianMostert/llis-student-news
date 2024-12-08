@@ -10,6 +10,8 @@ import Image from "next/image";
 import { commands, ICommand } from "@uiw/react-md-editor";
 import { checkSlugExists, createPost } from "@/actions/post";
 import rehypeRaw from "rehype-raw";
+import { useLocale, useTranslations } from "next-intl";
+import { useRouter } from "next/navigation";
 
 // Dynamically import MDEditor
 const MDEditor = dynamic(() => import("@uiw/react-md-editor"), { ssr: false });
@@ -52,7 +54,10 @@ const finalCommands: ICommand[] = [
     commands.help,
 ];
 
-export default function ArticleCreationForm({ authorId }: { authorId: string }) {
+export default function ArticleCreationForm({ authorId }: { authorId: string; }) {
+    const t = useTranslations('ArticleCreationForm');
+    const locale = useLocale();
+
     const [categories, setCategories] = useState<Category[]>([]);
     const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
     const [title, setTitle] = useState<string>("");
@@ -63,15 +68,17 @@ export default function ArticleCreationForm({ authorId }: { authorId: string }) 
     const [slug, setSlug] = useState<string>("");  // State for the slug
     const [titleExists, setTitleExists] = useState<boolean>(false);  // State to track if the slug exists
 
-    useEffect(() => {
-        const fetchCategories = async () => {
-            const data = await getCategories();
-            setCategories(data);
-            setSelectedCategory(data[0]);
-        };
 
-        fetchCategories();
-    }, []);
+    useEffect(() => {
+        if (categories.length === 0) {
+            const fetchCategories = async () => {
+                const data = await getCategories();
+                setCategories(data);
+                setSelectedCategory(data[0]);
+            };
+            fetchCategories();
+        }
+    }, [categories]);
 
     const handleCategoryChange = (e: ChangeEvent<HTMLSelectElement>) => {
         const selectedCategory = categories.find((category) => category.name === e.target.value);
@@ -111,7 +118,7 @@ export default function ArticleCreationForm({ authorId }: { authorId: string }) 
         checkSlugUniqueness();
     };
 
-
+    const router = useRouter();
     const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault(); // Prevent the default form submission
 
@@ -125,19 +132,19 @@ export default function ArticleCreationForm({ authorId }: { authorId: string }) 
             content,
             title,
             categoryId: catID,
-            imageId: selectedImageID,
+            imageId: selectedImageID ? selectedImageID : null,
             createdAt: new Date(),
             authorId,
             slug,  // Use the generated slug (original or modified)
         });
 
         // Redirect to the newly created article page
-        window.location.href = `/article/${res.slug}`;
+        router.push(`/article/${res.slug}`);
     };
 
     return (
         <div className="p-6 max-w-7xl mx-auto">
-            <h1 className="text-2xl font-bold mb-6">Create New Article</h1>
+            <h1 className="text-2xl font-bold mb-6">{t('title')}</h1>
             <form onSubmit={handleFormSubmit} className="space-y-6">
                 {/* Image Section */}
                 <div className="relative mb-6 flex justify-start">
@@ -149,6 +156,8 @@ export default function ArticleCreationForm({ authorId }: { authorId: string }) 
                             width={500}
                             height={500}
                             onClick={() => setShowMediaPopup(true)}
+                            priority // Preload this image
+                            placeholder="empty" // Lazy loading with blur effect
                         />
                     ) : (
                         <div
@@ -159,11 +168,10 @@ export default function ArticleCreationForm({ authorId }: { authorId: string }) 
                         </div>
                     )}
                 </div>
-
                 {/* Category */}
                 <div className="mb-4">
                     <label htmlFor="category" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Category
+                        {t('category')}
                     </label>
                     <select
                         id="category"
@@ -173,7 +181,7 @@ export default function ArticleCreationForm({ authorId }: { authorId: string }) 
                         required
                     >
                         <option value="" disabled>
-                            Select a category
+                            {t('selectACategory')}
                         </option>
                         {categories.map((category) => (
                             <option key={category.id} value={category.id}>
@@ -191,15 +199,16 @@ export default function ArticleCreationForm({ authorId }: { authorId: string }) 
                         value={title}
                         onChange={handleTitleChange}
                         className="mt-1 block w-full bg-transparent outline-none text-black dark:text-white text-2xl font-semibold rounded-lg p-2"
-                        placeholder="Enter article title"
+                        placeholder={t('enterArticleTitle')}
                         required
                     />
-                    {titleExists && <p className="text-yellow-600 text-sm mt-2">Article will be saved as "{slug}"</p>}
+                    {titleExists && <p className="text-yellow-600 text-sm mt-2">{t('savedAsSlug', { slug })}</p>}
                 </div>
 
                 {/* Markdown Editor */}
                 <div className="mb-6">
                     <MDEditor
+                        lang={locale}
                         value={content}
                         onChange={(value) => setContent(value || "")}
                         height={400}
@@ -218,7 +227,7 @@ export default function ArticleCreationForm({ authorId }: { authorId: string }) 
                         type="submit"
                         className="px-6 py-3 bg-green-600 text-white rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500"
                     >
-                        Create Article
+                        {t('createArticle')}
                     </button>
                 </div>
             </form>

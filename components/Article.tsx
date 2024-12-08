@@ -8,7 +8,7 @@ type Props = {
     article: PostWithAuthor;
 };
 
-const Article = ({ article }: Props) => {
+async function Article({ article }: Props) {
     const plainTextContent = removeMarkdown(article.content).slice(0, 150);
 
     return (

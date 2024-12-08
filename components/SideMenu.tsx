@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 import Link from "next/link";
 import { useSession, signIn, signOut } from "next-auth/react";
+import { useTranslations } from "next-intl";
 
 const Links: SideMenuCategory[] = [
     {
@@ -23,6 +24,7 @@ const Links: SideMenuCategory[] = [
 ];
 
 const SideMenu = () => {
+    const t = useTranslations('SideMenu');
     const [open, setOpen] = useState(false);
     const { data: session } = useSession();
     const user = session?.user;
@@ -55,7 +57,7 @@ const SideMenu = () => {
                 <IconButton onClick={() => signIn()} className="h-10 w-10" disabled={showDrawer}>
                     <UserPlusIcon className="h-8 w-8 cursor-pointer text-black dark:text-white" />
                 </IconButton>
-            ): (
+            ) : (
                 <IconButton onClick={() => signOut()} className="h-10 w-10" disabled={showDrawer}>
                     <UserMinusIcon className="h-8 w-8 cursor-pointer text-black dark:text-white" />
                 </IconButton>
@@ -117,7 +119,7 @@ const SideMenu = () => {
                                     variant="contained"
                                     className="bg-accent-light dark:bg-accent-dark hover:bg-accent-hover-light dark:hover:bg-accent-hover-dark text-white"
                                 >
-                                    Log Out
+                                    {t('signOut')}
                                 </Button>
                             ) : (
                                 <Button
@@ -126,7 +128,7 @@ const SideMenu = () => {
                                     variant="contained"
                                     className="bg-accent-light dark:bg-accent-dark hover:bg-accent-hover-light dark:hover:bg-accent-hover-dark text-white"
                                 >
-                                    Sign In
+                                    {t('signIn')}
                                 </Button>
                             )}
                         </div>
