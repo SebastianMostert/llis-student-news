@@ -8,83 +8,61 @@ import { Category } from "@prisma/client";
 import { IoAddCircleOutline } from "react-icons/io5";
 import Image from "next/image";
 import { commands, ICommand } from "@uiw/react-md-editor";
-import { checkSlugExists, createPost } from "@/actions/post";
+import { createPost, checkSlugExists } from "@/actions/post";
 import rehypeRaw from "rehype-raw";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
+import { gsap } from "gsap";
 
-// TODO: Add translation for categories
-
-// Dynamically import MDEditor
 const MDEditor = dynamic(() => import("@uiw/react-md-editor"), { ssr: false });
 
-const listCommands: ICommand[] = [
-    commands.unorderedListCommand,
-    commands.orderedListCommand,
-    commands.checkedListCommand,
-];
-
-const miscCommands: ICommand[] = [
+const finalCommands: ICommand[] = [
+    commands.bold,
+    commands.italic,
+    commands.strikethrough,
+    commands.divider,
     commands.link,
-    commands.quote,
-    commands.code,
-    commands.codeBlock,
-    commands.comment,
     commands.image,
     commands.table,
 ];
 
-const fontCommands: ICommand[] = [
-    commands.group([commands.title1, commands.title2, commands.title3, commands.title4, commands.title5, commands.title6], {
-        name: 'title',
-        groupName: 'title',
-        buttonProps: { 'aria-label': 'Insert title' },
-    }),
-    commands.bold,
-    commands.italic,
-    commands.strikethrough,
-    commands.hr,
+const LANGUAGES = [
+    { code: "en", name: "English" },
+    { code: "de", name: "German" },
+    { code: "fr", name: "French" },
+    { code: "lu", name: "Luxembourgish" },
 ];
 
-const finalCommands: ICommand[] = [
-    ...fontCommands,
-    commands.divider,
-    ...miscCommands,
-    commands.divider,
-    ...listCommands,
-    commands.divider,
-    commands.help,
-];
-
-export default function ArticleCreationForm({ authorId }: { authorId: string; }) {
-    const t = useTranslations('ArticleCreationForm');
+export default function ArticleCreationForm({ authorId }: { authorId: string }) {
+    const t = useTranslations("ArticleCreationForm");
     const locale = useLocale();
 
     const [categories, setCategories] = useState<Category[]>([]);
     const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
-    const [title, setTitle] = useState<string>("");
-    const [content, setContent] = useState<string>(""); // Markdown content
+    const [translations, setTranslations] = useState<{ [key: string]: { title: string; content: string } }>(
+        {
+            en: { title: "", content: "" },
+        }
+    );
     const [imageURL, setImageURL] = useState<string | null>(null);
     const [selectedImageID, setSelectedImageID] = useState<string | null>(null);
     const [showMediaPopup, setShowMediaPopup] = useState(false);
-    const [slug, setSlug] = useState<string>("");  // State for the slug
-    const [titleExists, setTitleExists] = useState<boolean>(false);  // State to track if the slug exists
-
+    const [selectedLang, setSelectedLang] = useState<string>("en");
 
     useEffect(() => {
-        if (categories.length === 0) {
-            const fetchCategories = async () => {
-                const data = await getCategories();
-                setCategories(data);
-                setSelectedCategory(data[0]);
-            };
-            fetchCategories();
-        }
-    }, [categories]);
+        const fetchCategories = async () => {
+            const data = await getCategories();
+            setCategories(data);
+            setSelectedCategory(data[0]);
+        };
+        fetchCategories();
+    }, []);
 
-    const handleCategoryChange = (e: ChangeEvent<HTMLSelectElement>) => {
-        const selectedCategory = categories.find((category) => category.name === e.target.value);
-        setSelectedCategory(selectedCategory || null);
+    const handleTranslationChange = (lang: string, field: "title" | "content", value: string) => {
+        setTranslations((prev) => ({
+            ...prev,
+            [lang]: { ...prev[lang], [field]: value },
+        }));
     };
 
     const handleMediaSelect = (selectedImageID: string, selectedImage: string) => {
@@ -93,62 +71,51 @@ export default function ArticleCreationForm({ authorId }: { authorId: string; })
         setShowMediaPopup(false);
     };
 
-    // Handle title change
-    const handleTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const newTitle = e.target.value;
-        setTitle(newTitle);
+    const generateUniqueSlug = async (title: string): Promise<string> => {
+        let baseSlug = title.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "").replace(/-+/g, "-");
+        let uniqueSlug = baseSlug;
+        let counter = 1;
 
-        // Convert title to slug and check if the slug already exists
-        const newSlug = newTitle.replace(/\s+/g, '-').toLowerCase();
-        setSlug(newSlug);  // Set the initial slug
+        while (await checkSlugExists(uniqueSlug)) {
+            uniqueSlug = `${baseSlug}-${counter}`;
+            counter++;
+        }
 
-        const checkSlugUniqueness = async () => {
-            let finalSlug = newSlug;
-            let suffix = 1;
-
-            // Check if the slug already exists, and keep appending numbers until a unique slug is found
-            while (await checkSlugExists(finalSlug)) {
-                finalSlug = `${newSlug}-${suffix}`;
-                suffix++;
-            }
-
-            // Update state with the unique slug
-            setSlug(finalSlug);
-            setTitleExists(finalSlug !== newSlug);  // Indicate if the slug was modified
-        };
-
-        checkSlugUniqueness();
+        return uniqueSlug;
     };
 
     const router = useRouter();
     const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault(); // Prevent the default form submission
+        e.preventDefault();
 
         const catID = selectedCategory ? selectedCategory.id : null;
-        if (!title || !content || !catID) {
-            alert("Please fill in all required fields.");
+        if (!translations.en.title || !translations.en.content || !catID) {
+            alert("Please fill in all required fields. The English title and content are required.");
             return;
         }
 
+        const slug = await generateUniqueSlug(translations.en.title);
+
+        // Only english post
         const res = await createPost({
-            content,
-            title,
+            content: translations.en.content,
+            title: translations.en.title,
             categoryId: catID,
-            imageId: selectedImageID ? selectedImageID : null,
+            imageId: selectedImageID || null,
             createdAt: new Date(),
             authorId,
-            slug,  // Use the generated slug (original or modified)
+            slug,
         });
 
-        // Redirect to the newly created article page
+        // Create other translations
+
         router.push(`/article/${res.slug}`);
     };
 
     return (
         <div className="p-6 max-w-7xl mx-auto">
-            <h1 className="text-2xl font-bold mb-6">{t('title')}</h1>
+            <h1 className="text-2xl font-bold mb-6">{t("title")}</h1>
             <form onSubmit={handleFormSubmit} className="space-y-6">
-                {/* Image Section */}
                 <div className="relative mb-6 flex justify-start">
                     {imageURL ? (
                         <Image
@@ -158,8 +125,6 @@ export default function ArticleCreationForm({ authorId }: { authorId: string; })
                             width={500}
                             height={500}
                             onClick={() => setShowMediaPopup(true)}
-                            priority // Preload this image
-                            placeholder="empty" // Lazy loading with blur effect
                         />
                     ) : (
                         <div
@@ -170,21 +135,18 @@ export default function ArticleCreationForm({ authorId }: { authorId: string; })
                         </div>
                     )}
                 </div>
-                {/* Category */}
+
                 <div className="mb-4">
                     <label htmlFor="category" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                        {t('category')}
+                        {t("category")}
                     </label>
                     <select
                         id="category"
                         value={selectedCategory?.name}
-                        onChange={(e) => handleCategoryChange(e)}
+                        onChange={(e) => setSelectedCategory(categories.find((c) => c.id === e.target.value) || null)}
                         className="mt-1 block w-full bg-transparent text-gray-700 dark:text-gray-300 text-lg rounded-lg border border-gray-300 dark:border-gray-700 p-2"
                         required
                     >
-                        <option value="" disabled>
-                            {t('selectACategory')}
-                        </option>
                         {categories.map((category) => (
                             <option key={category.id} value={category.id}>
                                 {category.name}
@@ -193,48 +155,75 @@ export default function ArticleCreationForm({ authorId }: { authorId: string; })
                     </select>
                 </div>
 
-                {/* Title */}
-                <div className="mb-4">
-                    <input
-                        type="text"
-                        id="title"
-                        value={title}
-                        onChange={handleTitleChange}
-                        className="mt-1 block w-full bg-transparent outline-none text-black dark:text-white text-2xl font-semibold rounded-lg p-2"
-                        placeholder={t('enterArticleTitle')}
-                        required
-                    />
-                    {titleExists && <p className="text-yellow-600 text-sm mt-2">{t('savedAsSlug', { slug })}</p>}
-                </div>
-
-                {/* Markdown Editor */}
                 <div className="mb-6">
-                    <MDEditor
-                        lang={locale}
-                        value={content}
-                        onChange={(value) => setContent(value || "")}
-                        height={400}
-                        className="mt-2 block w-full text-black dark:text-white text-2xl font-semibold rounded-lg p-2 bg-transparent"
-                        commands={finalCommands.length > 0 ? finalCommands : undefined}
-                        preview="live"
-                        previewOptions={{
-                            rehypePlugins: [[rehypeRaw]],
-                        }}
-                    />
+                    <div className="flex justify-between items-center mb-4">
+                        <div className="flex items-center space-x-2">
+                            <span className="text-lg font-semibold text-gray-800 dark:text-gray-200">
+                                {t("currentLanguage")}:
+                            </span>
+                            <select
+                                value={selectedLang}
+                                onChange={(e) => setSelectedLang(e.target.value)}
+                                className="p-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-500 focus:outline-none"
+                            >
+                                {LANGUAGES.map((lang) => (
+                                    <option key={lang.code} value={lang.code}>
+                                        {lang.name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
+
+                    {LANGUAGES.map((lang) => (
+                        <div
+                            id={`lang-${lang.code}`}
+                            key={lang.code}
+                            className={
+                                selectedLang === lang.code
+                                    ? "block border-2 border-blue-500 rounded-lg p-4 bg-gray-50 dark:bg-gray-800"
+                                    : "hidden"
+                            }
+                        >
+                            <h2 className="text-xl font-bold mb-2 text-gray-800 dark:text-gray-200">
+                                {t("editingLanguage")}: {lang.name}
+                            </h2>
+                            <input
+                                type="text"
+                                value={translations[lang.code]?.title || ""}
+                                onChange={(e) => handleTranslationChange(lang.code, "title", e.target.value)}
+                                className="w-full p-2 border border-gray-300 rounded-lg mb-4 focus:ring focus:ring-blue-500 focus:outline-none"
+                                placeholder={t("enterArticleTitle")}
+                            />
+                            <MDEditor
+                                value={translations[lang.code]?.content || ""}
+                                onChange={(value) => handleTranslationChange(lang.code, "content", value || "")}
+                                height={300}
+                                commands={finalCommands}
+                                preview="live"
+                                previewOptions={{ rehypePlugins: [[rehypeRaw]] }}
+                            />
+                        </div>
+                    ))}
                 </div>
 
-                {/* Submit Button */}
                 <div className="flex justify-end">
                     <button
                         type="submit"
                         className="px-6 py-3 bg-green-600 text-white rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500"
                     >
-                        {t('createArticle')}
+                        {t("createArticle")}
                     </button>
                 </div>
             </form>
 
-            {showMediaPopup && <MediaSelectorPopUp onSelect={handleMediaSelect} selected={imageURL || undefined} selectedId={selectedImageID || undefined} />}
+            {showMediaPopup && (
+                <MediaSelectorPopUp
+                    onSelect={handleMediaSelect}
+                    selected={imageURL || undefined}
+                    selectedId={selectedImageID || undefined}
+                />
+            )}
         </div>
     );
 }

@@ -100,6 +100,10 @@ const MediaSelectorPopUp = ({ onSelect, selected, selectedId }: { onSelect: (id:
         setContextMenu(null); // Close the context menu
     };
 
+    // Function to clear the selection
+    const clearSelection = () => {
+        onSelect('', ''); // Deselect the image
+    };
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
@@ -165,12 +169,20 @@ const MediaSelectorPopUp = ({ onSelect, selected, selectedId }: { onSelect: (id:
                     </div>
                 )}
 
-                <button
-                    className="mt-4 w-full bg-accent-light dark:bg-accent-dark hover:bg-accent-hover-light dark:hover:bg-accent-hover-dark text-white py-2 px-4 rounded-lg"
-                    onClick={() => onSelect(selectedId || '', selected || '')}
-                >
-                    {t('cancel')}
-                </button>
+                <div className="mt-4 space-y-4">
+                    <button
+                        className="w-full bg-accent-light dark:bg-accent-dark hover:bg-accent-hover-light dark:hover:bg-accent-hover-dark text-white py-2 px-4 rounded-lg"
+                        onClick={() => onSelect(selectedId || '', selected || '')}
+                    >
+                        {t('cancel')}
+                    </button>
+                    <button
+                        className="w-full bg-accent-light dark:bg-accent-dark hover:bg-accent-hover-light dark:hover:bg-accent-hover-dark text-white py-2 px-4 rounded-lg"
+                        onClick={clearSelection}
+                    >
+                        {t('clearSelection')}
+                    </button>
+                </div>
             </div>
         </div>
     );

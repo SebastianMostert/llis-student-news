@@ -54,7 +54,9 @@
         "selectACategory": "Select a category",
         "enterArticleTitle": "Enter article title",
         "savedAsSlug": "Article will be saved as \"{slug}\"",
-        "createArticle": "Create Article"
+        "createArticle": "Create Article",
+        "currentLanguage": "Current Language",
+        "editingLanguage": "Editing Language"
     },
     "ArticleNotFound": {
         "articleNotFound": "Article Not Found"
@@ -65,7 +67,8 @@
         "selectMedia": "Select Media",
         "uploading": "Uploading...",
         "delete": "Delete",
-        "cancel": "Cancel"
+        "cancel": "Cancel",
+        "clearSelection": "Clear Selection"
     },
     "NavLinks": {
         "loading": "Loading..."

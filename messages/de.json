@@ -49,12 +49,14 @@
         "enterCode": "Geben Sie Ihren Code ein"
     },
     "ArticleCreationForm": {
-        "title": "Artikel erstellen",
+        "title": "Neuen Artikel erstellen",
         "category": "Kategorie",
-        "selectACategory": "Wählen Sie eine Kategorie",
-        "enterArticleTitle": "Geben Sie den Titel des Artikels ein",
-        "savedAsSlug": "Artikel wird gespeichert als \"{slug}\"",
-        "createArticle": "Artikel erstellen"
+        "selectACategory": "Kategorie auswählen",
+        "enterArticleTitle": "Artikeltitel eingeben",
+        "savedAsSlug": "Artikel wird als \"{slug}\" gespeichert",
+        "createArticle": "Artikel erstellen",
+        "currentLanguage": "Aktuelle Sprache",
+        "editingLanguage": "Bearbeitungssprache"
     },
     "ArticleNotFound": {
         "articleNotFound": "Artikel nicht gefunden"
@@ -65,7 +67,8 @@
         "selectMedia": "Medium auswählen",
         "uploading": "Hochladen...",
         "delete": "Löschen",
-        "cancel": "Abbrechen"
+        "cancel": "Abbrechen",
+        "clearSelection": "Auswahl löschen"
     },
     "NavLinks": {
         "loading": "Laden..."
