@@ -55,6 +55,7 @@
     "react-timeago": "^7.2.0",
     "rehype-raw": "^7.0.0",
     "remove-markdown": "^0.5.5",
+    "sonner": "^1.7.1",
     "storybook-next-intl": "^1.2.4",
     "tailwind-merge": "^2.5.4",
     "tailwindcss-animate": "^1.0.7",

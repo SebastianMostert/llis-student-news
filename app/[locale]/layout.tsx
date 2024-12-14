@@ -5,6 +5,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { routing } from '@/i18n/routing';
 import { getTranslations } from "next-intl/server";
+import { Toaster } from 'sonner'
 
 export async function generateMetadata({ params }: { params: Promise<{ [key: string]: string | undefined }> }) {
 
@@ -54,6 +55,7 @@ export default async function LocaleLayout({
                 <SessionProvider>
                     <Providers>
                         <NextIntlClientProvider messages={messages}>
+                            <Toaster richColors position="bottom-right" />
                             <div>{children}</div>
                         </NextIntlClientProvider>
                     </Providers>

@@ -13,17 +13,45 @@ import rehypeRaw from "rehype-raw";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { gsap } from "gsap";
+import { toast } from "sonner";
 
 const MDEditor = dynamic(() => import("@uiw/react-md-editor"), { ssr: false });
+const listCommands: ICommand[] = [
+    commands.unorderedListCommand,
+    commands.orderedListCommand,
+    commands.checkedListCommand,
+];
 
-const finalCommands: ICommand[] = [
+const miscCommands: ICommand[] = [
+    commands.link,
+    commands.quote,
+    commands.code,
+    commands.codeBlock,
+    commands.comment,
+    commands.image,
+    commands.table,
+];
+
+const fontCommands: ICommand[] = [
+    commands.group([commands.title1, commands.title2, commands.title3, commands.title4, commands.title5, commands.title6], {
+        name: 'title',
+        groupName: 'title',
+        buttonProps: { 'aria-label': 'Insert title' },
+    }),
     commands.bold,
     commands.italic,
     commands.strikethrough,
+    commands.hr,
+];
+
+const finalCommands: ICommand[] = [
+    ...fontCommands,
     commands.divider,
-    commands.link,
-    commands.image,
-    commands.table,
+    ...miscCommands,
+    commands.divider,
+    ...listCommands,
+    commands.divider,
+    commands.help,
 ];
 
 const LANGUAGES = [
@@ -85,31 +113,54 @@ export default function ArticleCreationForm({ authorId }: { authorId: string }) 
     };
 
     const router = useRouter();
+
     const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         const catID = selectedCategory ? selectedCategory.id : null;
-        if (!translations.en.title || !translations.en.content || !catID) {
-            alert("Please fill in all required fields. The English title and content are required.");
-            return;
+
+        if (!catID) return toast.error(t("selectCategory"), { position: "top-center" });
+
+        const english = translations.en;
+
+        // Check if any english fields are empty
+        if (!english.title) return toast.error(t("enterArticleTitleEn"), { position: "top-center" });
+        if (!english.content) return toast.error(t("enterArticleContentEn"), { position: "top-center" });
+
+        // Loop over all other languages and check if any fields are empty
+        for (const [lang, { title, content }] of Object.entries(translations)) {
+            if (lang == "en") continue;
+
+            if (!title) return toast.error(t("enterArticleTitle", { lang }), { position: "top-center" });
+            if (!content) return toast.error(t("enterArticleContent", { lang }), { position: "top-center" });
         }
 
-        const slug = await generateUniqueSlug(translations.en.title);
+        try {
+            const slug = await generateUniqueSlug(english.title);
 
-        // Only english post
-        const res = await createPost({
-            content: translations.en.content,
-            title: translations.en.title,
-            categoryId: catID,
-            imageId: selectedImageID || null,
-            createdAt: new Date(),
-            authorId,
-            slug,
-        });
+            await toast.promise(
+                createPost({
+                    content: english.content,
+                    title: translations.en.title,
+                    categoryId: catID,
+                    imageId: selectedImageID || null,
+                    createdAt: new Date(),
+                    authorId,
+                    slug,
+                }),
+                {
+                    loading: t("creatingPostLoading"),
+                    success: t("creatingPostSuccess"),
+                    error: t("creatingPostError"),
+                    position: "top-center",
+                },
+            );
 
-        // Create other translations
-
-        router.push(`/article/${res.slug}`);
+            // Redirect to the created article
+            router.push(`/article/${slug}`);
+        } catch (error) {
+            console.error("Error creating post:", error);
+        }
     };
 
     return (

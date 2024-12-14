@@ -7,6 +7,7 @@ import { newVerification } from '@/actions/newVerification';
 import { NewVerificationResponses, SendCodeResponses, SubscribeResponses } from '@/types';
 import { subscribe } from '@/actions/subscribe';
 import { useTranslations } from 'next-intl';
+import { toast } from 'sonner';
 
 const SubscribeForm = ({ email_ }: { email_?: string }) => {
     const t = useTranslations('SubscribeForm');
@@ -23,7 +24,6 @@ const SubscribeForm = ({ email_ }: { email_?: string }) => {
 
         const res = await sendVerificationCode({ email });
 
-        // TODO: Remove alerts in place of toast
         switch (res) {
             case SendCodeResponses.CODE_SENT:
                 setIsCodeSent(true);
@@ -35,28 +35,42 @@ const SubscribeForm = ({ email_ }: { email_?: string }) => {
                         setAlreadyVerified(true);
                         break;
                     case SubscribeResponses.EMAIL_DOES_NOT_EXIST:
-                        alert('Email does not exist.');
+                        toast.error(t('emailDoesNotExist'));
                         break;
                     case SubscribeResponses.EMAIL_NOT_VERIFIED:
-                        alert('Email not verified');
-                        break;
+                        toast.error(t('emailNotVerified'));
                     case SubscribeResponses.SUBSCRIBED:
                         setIsVerified(true);
                         break;
                     default:
-                        alert('Error subscribing');
+                        toast.error(t('errorSubscribing'));
                         break;
                 }
                 break;
             default:
-                alert('Error sending code');
+                toast.error(t('errorSendingCode'));
                 break;
         }
     };
 
     const handleVerifyCode = async () => {
         const verified = await newVerification(code);
-        if (verified !== NewVerificationResponses.EMAIL_VERIFIED) alert(verified);
+        if (verified !== NewVerificationResponses.EMAIL_VERIFIED) {
+            switch (verified) {
+                case NewVerificationResponses.INVALID_TOKEN:
+                    toast.error(t('invalidToken'));
+                    break;
+                case NewVerificationResponses.TOKEN_EXPIRED:
+                    toast.error(t('tokenExpired'));
+                    break;
+                case NewVerificationResponses.EMAIL_DOES_NOT_EXIST:
+                    toast.error(t('emailDoesNotExist'));
+                    break;
+                default:
+                    toast.error(t('errorVerifyingCode'));
+                    break;
+            }
+        }
         if (verified === NewVerificationResponses.EMAIL_VERIFIED) {
             const res = await subscribe(email);
             switch (res) {
@@ -64,16 +78,16 @@ const SubscribeForm = ({ email_ }: { email_?: string }) => {
                     setAlreadyVerified(true);
                     break;
                 case SubscribeResponses.EMAIL_DOES_NOT_EXIST:
-                    alert('Email does not exisssst');
+                    toast.error(t('emailDoesNotExist'));
                     break;
                 case SubscribeResponses.EMAIL_NOT_VERIFIED:
-                    alert('Email not verified');
+                    toast.error(t('emailNotVerified'));
                     break;
                 case SubscribeResponses.SUBSCRIBED:
                     setIsVerified(true);
                     break;
                 default:
-                    alert('Error subscribing');
+                    toast.error(t('errorSubscribing'));
                     break;
             }
         }

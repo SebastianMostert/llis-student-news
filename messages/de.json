@@ -46,7 +46,14 @@
         "thankYou": "Vielen Dank für Ihr Abonnement. Wir freuen uns, unsere Neuigkeiten mit Ihnen zu teilen!",
         "alreadySubscribed": "Sie sind bereits abonniert!",
         "enterEmail": "Geben Sie Ihre E-Mail-Adresse ein",
-        "enterCode": "Geben Sie Ihren Code ein"
+        "enterCode": "Geben Sie Ihren Code ein",
+        "emailDoesNotExist": "Email existiert nicht.",
+        "emailNotVerified": "Email nicht verifiziert.",
+        "errorSubscribing": "Fehler beim Abonnieren.",
+        "errorSendingCode": "Fehler beim Senden des Bestätigungscodes.",
+        "invalidToken": "Ungültiger Token.",
+        "tokenExpired": "Token abgelaufen.",
+        "errorVerifyingCode": "Fehler beim Verifizieren des Codes."
     },
     "ArticleCreationForm": {
         "title": "Neuen Artikel erstellen",
@@ -56,19 +63,43 @@
         "savedAsSlug": "Artikel wird als \"{slug}\" gespeichert",
         "createArticle": "Artikel erstellen",
         "currentLanguage": "Aktuelle Sprache",
-        "editingLanguage": "Bearbeitungssprache"
+        "editingLanguage": "Bearbeitungssprache",
+        "selectCategory": "Bitte wählen Sie eine Kategorie aus.",
+        "articleTitleEnRequired": "Bitte geben Sie einen Titel auf Englisch ein.",
+        "articleContentEnRequired": "Bitte geben Sie Inhalte auf Englisch ein.",
+        "articleTitleRequired": "Bitte geben Sie einen Titel auf {lang} ein.",
+        "articleContentRequired": "Bitte geben Sie Inhalte auf {lang} ein.",
+        "creatingPostLoading": "Artikel wird erstellt...",
+        "creatingPostSuccess": "Artikel wurde erfolgreich erstellt!",
+        "creatingPostError": "Beim Erstellen des Artikels ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut."
     },
     "ArticleNotFound": {
         "articleNotFound": "Artikel nicht gefunden"
     },
     "MediaSelectorPopUp": {
-        "imageUsedInPosts": "Dieses Bild wird in {usageCount} Beitrag(en) verwendet. Möchten Sie es wirklich löschen?",
-        "deleteMedia": "Möchten Sie dieses Medium wirklich löschen?",
-        "selectMedia": "Medium auswählen",
+        "selectMedia": "Medien auswählen",
+        "errorFetchingMedia": "Fehler beim Abrufen der Mediendateien.",
+        "fileTooLarge": "Die ausgewählte Datei ist zu groß. Bitte wählen Sie eine Datei unter 5MB.",
+        "compressedFileTooLarge": "Die komprimierte Datei überschreitet die maximale Größe von 5MB.",
+        "errorUploadingFile": "Beim Hochladen der Datei ist ein Fehler aufgetreten.",
+        "fileUploaded": "Datei erfolgreich hochgeladen.",
+        "deleteMedia": "Möchten Sie diese Datei wirklich löschen?",
+        "mediaDeleted": "Mediendatei erfolgreich gelöscht.",
+        "errorDeletingMedia": "Fehler beim Löschen der Mediendatei.",
+        "imageUsedInPosts": "Dieses Bild wird aktuell in {usageCount} Beitrag/Beiträgen verwendet. Möchten Sie es wirklich löschen?",
+        "selectionCleared": "Die Auswahl wurde gelöscht.",
         "uploading": "Hochladen...",
+        "clearSelection": "Auswahl löschen",
         "delete": "Löschen",
         "cancel": "Abbrechen",
-        "clearSelection": "Auswahl löschen"
+        "selectFile": "Wählen Sie eine Datei zum Hochladen aus",
+        "compressingFile": "Datei wird komprimiert...",
+        "fileStillTooLarge": "Die Datei ist nach der Komprimierung immer noch zu groß. Bitte wählen Sie eine kleinere Datei.",
+        "loadingImages": "Bilder werden geladen...",
+        "confirm": "Ja",
+        "deny": "Nein",
+        "noMediaFiles": "Keine Mediendateien verfügbar. Laden Sie eine hoch, um zu beginnen.",
+        "errorCompressingFile": "Beim Komprimieren der Datei ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut."
     },
     "NavLinks": {
         "loading": "Laden..."
@@ -87,7 +118,11 @@
     "SubscribeBtn": {
         "authError": "Authentifizierungsfehler. Kontaktieren Sie den Seitenbetreiber. Fehler: Fehlende Benutzer-E-Mail mit isSubscribed: {isSubscribed}",
         "subscribeNow": "Jetzt abonnieren",
-        "unsubscribeNow": "Jetzt abmelden"
+        "unsubscribeNow": "Jetzt abmelden",
+        "emailDoesNotExist": "Email existiert nicht.",
+        "alreadyUnsubscribed": "Sie sind bereits abgemeldet.",
+        "unsubscribed": "Sie haben sich erfolgreich abgemeldet.",
+        "errorUnsubscribing": "Fehler beim Abmelden."
     },
     "LocaleSwitcher": {
         "label": "Sprache wechseln",

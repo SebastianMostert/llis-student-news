@@ -46,7 +46,14 @@
         "thankYou": "Thank you for subscribing. We're excited to share our updates with you!",
         "alreadySubscribed": "You're already subscribed!",
         "enterEmail": "Enter your email",
-        "enterCode": "Enter your code"
+        "enterCode": "Enter your code",
+        "emailDoesNotExist": "Email does not exist.",
+        "emailNotVerified": "Email not verified.",
+        "errorSubscribing": "Error subscribing.",
+        "errorSendingCode": "Error sending verification code.",
+        "invalidToken": "Invalid token.",
+        "tokenExpired": "Token expired.",
+        "errorVerifyingCode": "Error verifying code."
     },
     "ArticleCreationForm": {
         "title": "Create New Article",
@@ -56,19 +63,43 @@
         "savedAsSlug": "Article will be saved as \"{slug}\"",
         "createArticle": "Create Article",
         "currentLanguage": "Current Language",
-        "editingLanguage": "Editing Language"
+        "editingLanguage": "Editing Language",
+        "selectCategory": "Please select a category.",
+        "articleTitleEnRequired": "Please enter a title in English.",
+        "articleContentEnRequired": "Please enter content in English.",
+        "articleTitleRequired": "Please enter a title in {lang}.",
+        "articleContentRequired": "Please enter content in ${lang}.",
+        "creatingPostLoading": "Creating article...",
+        "creatingPostSuccess": "Article created successfully!",
+        "creatingPostError": "An error occurred while creating the article. Please try again."
     },
     "ArticleNotFound": {
         "articleNotFound": "Article Not Found"
     },
     "MediaSelectorPopUp": {
-        "imageUsedInPosts": "This image is used in {usageCount} post(s). Are you sure you want to delete it?",
-        "deleteMedia": "Are you sure you want to delete this media?",
         "selectMedia": "Select Media",
+        "errorFetchingMedia": "Error fetching media files.",
+        "fileTooLarge": "The selected file is too large. Please select a file under 5MB.",
+        "compressedFileTooLarge": "The compressed file size exceeds the limit of 5MB.",
+        "errorUploadingFile": "An error occurred while uploading the file.",
+        "fileUploaded": "File uploaded successfully.",
+        "deleteMedia": "Are you sure you want to delete this media?",
+        "mediaDeleted": "Media file deleted successfully.",
+        "errorDeletingMedia": "Error deleting media file.",
+        "imageUsedInPosts": "This image is currently used in {usageCount} post(s). Are you sure you want to delete it?",
+        "selectionCleared": "Selection has been cleared.",
         "uploading": "Uploading...",
+        "clearSelection": "Clear Selection",
         "delete": "Delete",
         "cancel": "Cancel",
-        "clearSelection": "Clear Selection"
+        "selectFile": "Select a file to upload",
+        "compressingFile": "Compressing file...",
+        "fileStillTooLarge": "The file is still too large after compression. Please choose a smaller file.",
+        "loadingImages": "Loading images...",
+        "confirm": "Yes",
+        "deny": "No",
+        "noMediaFiles": "No media files available. Upload one to get started.",
+        "errorCompressingFile": "An error occurred during file compression. Please try again."
     },
     "NavLinks": {
         "loading": "Loading..."
@@ -87,7 +118,11 @@
     "SubscribeBtn": {
         "authError": "Auth Error. Contact the site owner. Error: Missing User Email with isSubscribed: {isSubscribed}",
         "subscribeNow": "Subscribe Now",
-        "unsubscribeNow": "Unsubscribe Now"
+        "unsubscribeNow": "Unsubscribe Now",
+        "emailDoesNotExist": "Email does not exist.",
+        "alreadyUnsubscribed": "You are already unsubscribed.",
+        "unsubscribed": "You have been unsubscribed.",
+        "errorUnsubscribing": "Error unsubscribing."
     },
     "LocaleSwitcher": {
         "label": "Change language",

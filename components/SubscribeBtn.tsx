@@ -5,6 +5,7 @@ import ModalSubscribe from './ModalSubscribe';
 import { unsubscribeWithEmail } from '@/actions/unsubscribe';
 import { UnsubscribeResponses } from '@/types';
 import { useTranslations } from 'next-intl';
+import { toast } from 'sonner';
 
 const SubscribeBtn = ({ userEmail, isSubscribed }: { userEmail?: string; isSubscribed: boolean }) => {
     const t = useTranslations('SubscribeBtn');
@@ -20,16 +21,16 @@ const SubscribeBtn = ({ userEmail, isSubscribed }: { userEmail?: string; isSubsc
             const res = await unsubscribeWithEmail(userEmail);
             switch (res) {
                 case UnsubscribeResponses.EMAIL_DOES_NOT_EXIST:
-                    alert('Email does not exist.');
+                    toast.error(t("emailDoesNotExist"));
                     break;
                 case UnsubscribeResponses.ALREADY_UNSUBSCRIBED:
-                    alert('You are already unsubscribed.');
+                    toast.info(t("alreadyUnsubscribed"));
                     break;
                 case UnsubscribeResponses.UNSUBSCRIBED:
-                    window.location.reload();
+                    toast.success(t("unsubscribed"));
                     break;
                 default:
-                    alert('Error unsubscribing.');
+                    toast.error(t("errorUnsubscribing"));
             }
         }
     };
