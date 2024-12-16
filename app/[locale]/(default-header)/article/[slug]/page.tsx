@@ -8,6 +8,7 @@ import remarkGfm from 'remark-gfm'
 import removeMarkdown from "remove-markdown";
 import { getLocale, getTranslations } from "next-intl/server";
 import { getTranslatedPostDescription, getTranslatedPostTitle } from "@/lib/translations";
+import { incrementPostView } from "@/actions/incrementViews";
 
 export async function generateMetadata({ params }: { params: Promise<{ [key: string]: string | undefined }> }) {
     const t = await getTranslations('ArticlePage');
@@ -82,9 +83,8 @@ async function ArticlePage({ params }: { params: Promise<{ [key: string]: string
         include: { author: true, image: true },
     });
 
-    if (!article) {
-        return <ArticleNotFound />;
-    }
+    if (!article) return <ArticleNotFound />;
+    incrementPostView(slug);
 
     const translatedTitle = await getTranslatedPostTitle(locale, article.id) || article.title;
     const translatedDescription = await getTranslatedPostDescription(locale, article.id) || article.content;

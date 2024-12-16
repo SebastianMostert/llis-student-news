@@ -113,7 +113,9 @@
     },
     "SideMenu": {
         "signOut": "Log Out",
-        "signIn": "Sign In"
+        "signIn": "Sign In",
+        "editor": "Editor",
+        "newArticle": "New Article"
     },
     "SubscribeBtn": {
         "authError": "Auth Error. Contact the site owner. Error: Missing User Email with isSubscribed: {isSubscribed}",
@@ -150,5 +152,21 @@
         "phone": "+1 234 567 890",
         "language": "Language",
         "copyright": "&copy; {year} Keeping Up With LLIS. All Rights Reserved."
+    },
+    "subscribeFooter": {
+        "emailDoesNotExist": "Email does not exist.",
+        "emailNotVerified": "Email not verified.",
+        "errorSubscribing": "Error subscribing.",
+        "errorSendingCode": "Error sending verification code.",
+        "invalidToken": "Invalid token.",
+        "tokenExpired": "Token expired.",
+        "errorVerifyingCode": "Error verifying code.",
+        "enterCode": "Enter your code",
+        "verifyCode": "Verify Code",
+        "subscribed": "You're Subscribed!",
+        "alreadySubscribed": "You're already subscribed!",
+        "newsletter": "Newsletter",
+        "newsletterPlaceholder": "Enter email",
+        "subscribe": "Subscribe"
     }
 }

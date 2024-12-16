@@ -113,7 +113,9 @@
     },
     "SideMenu": {
         "signOut": "Abmelden",
-        "signIn": "Anmelden"
+        "signIn": "Anmelden",
+        "editor": "Editor",
+        "newArticle": "Neuer Artikel"
     },
     "SubscribeBtn": {
         "authError": "Authentifizierungsfehler. Kontaktieren Sie den Seitenbetreiber. Fehler: Fehlende Benutzer-E-Mail mit isSubscribed: {isSubscribed}",
@@ -142,13 +144,26 @@
         "quickLinks": "Schnellzugriff",
         "privacyPolicy": "Datenschutzrichtlinie",
         "contactUs": "Kontakt",
-        "newsletter": "Newsletter",
-        "newsletterPlaceholder": "E-Mail eingeben",
-        "subscribe": "Abonnieren",
         "followUs": "Folge uns",
         "address": "2 rue Victor Ferrant, 6122 Junglinster",
         "phone": "+1 234 567 890",
         "language": "Sprache",
         "copyright": "&copy; {year} Keeping Up With LLIS. Alle Rechte vorbehalten."
+    },
+    "subscribeFooter": {
+        "emailDoesNotExist": "Email existiert nicht.",
+        "emailNotVerified": "Email nicht verifiziert.",
+        "errorSubscribing": "Fehler beim Abonnieren.",
+        "errorSendingCode": "Fehler beim Senden der Bestätigungscode.",
+        "invalidToken": "Ungültiger Token.",
+        "tokenExpired": "Token abgelaufen.",
+        "errorVerifyingCode": "Fehler beim Bestätigen des Codes.",
+        "enterCode": "Geben Sie Ihren Code ein",
+        "verifyCode": "Code bestätigen",
+        "subscribed": "Sie sind abonniert!",
+        "alreadySubscribed": "Sie sind bereits abonniert!",
+        "newsletter": "Newsletter",
+        "newsletterPlaceholder": "E-Mail-Adresse eingeben",
+        "subscribe": "Abonnieren"
     }
 }

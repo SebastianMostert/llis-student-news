@@ -3,6 +3,7 @@ import { FaFacebookF, FaInstagram, FaPhoneAlt, FaMapMarkerAlt } from 'react-icon
 import { FaXTwitter } from "react-icons/fa6";
 import LocaleSwitcher from './LocaleSwitcher';
 import { getTranslations } from 'next-intl/server';
+import SubscribeFooter from './newsletter/subscribeFooter';
 
 async function Footer() {
     const t = await getTranslations('Footer');
@@ -34,22 +35,7 @@ async function Footer() {
                 </div>
 
                 {/* Column 2: Newsletter */}
-                <div className="flex flex-col items-start w-full sm:w-auto">
-                    <h3 className="text-base font-semibold mb-2">{t('newsletter')}</h3>
-                    <form className="flex w-full max-w-xs space-x-2">
-                        <input
-                            type="email"
-                            placeholder={t('newsletterPlaceholder')}
-                            className="flex-1 px-2 py-1 text-xs sm:text-sm bg-gray-800 text-white border border-gray-600 rounded-md focus:outline-none"
-                        />
-                        <button
-                            type="submit"
-                            className="px-3 py-1 bg-accent-light dark:bg-accent-dark hover:bg-accent-hover-light dark:hover:bg-accent-hover-dark rounded-md text-white text-xs sm:text-sm"
-                        >
-                            {t('subscribe')}
-                        </button>
-                    </form>
-                </div>
+                <SubscribeFooter />
 
                 {/* Column 3: Social Media */}
                 <div className="flex flex-col items-start w-full sm:w-auto">

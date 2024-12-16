@@ -8,14 +8,14 @@ type Category =
     | "technology";
 
 type SideMenuLink = {
-    title: string;
+    titleTranslationKey: string;
     href: string;
     icon?: React.ReactNode;
     protected?: boolean;
 };
 
 type SideMenuCategory = {
-    categoryName?: string;
+    categoryNameTranslationKey?: string;
     links: SideMenuLink[];
     protected?: boolean;
 }

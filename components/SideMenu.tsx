@@ -17,9 +17,9 @@ import { useTranslations } from "next-intl";
 
 const Links: SideMenuCategory[] = [
     {
-        categoryName: "Editor",
+        categoryNameTranslationKey: "editor",
         protected: true,
-        links: [{ title: "New Article", href: "/new-article", protected: true }],
+        links: [{ titleTranslationKey: "newArticle", href: "/new-article", protected: true }],
     },
 ];
 
@@ -82,12 +82,12 @@ const SideMenu = () => {
                                 if (category.protected && !user) return null;
                                 return (
                                     <div key={index} className="mb-4">
-                                        {category.categoryName && (
+                                        {category.categoryNameTranslationKey && (
                                             <ListSubheader
-                                                key={category.categoryName}
+                                                key={category.categoryNameTranslationKey}
                                                 className="bg-secondaryBg-light dark:bg-secondaryBg-dark text-black dark:text-white font-semibold text-lg tracking-wide uppercase py-2 px-4 border-b border-gray-300 dark:border-gray-700"
                                             >
-                                                {category.categoryName}
+                                                {t(category.categoryNameTranslationKey)}
                                             </ListSubheader>
                                         )}
                                         {category.links.map((link, i) => {
@@ -99,7 +99,7 @@ const SideMenu = () => {
                                                         className="hover:bg-primaryBg-light dark:hover:bg-primaryBg-dark rounded px-4"
                                                     >
                                                         <ListItemText
-                                                            primary={link.title}
+                                                            primary={t(link.titleTranslationKey)}
                                                             className="flex items-center justify-center sm:justify-start"
                                                         />
                                                     </ListItemButton>

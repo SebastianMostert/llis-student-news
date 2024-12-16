@@ -13,6 +13,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum PermissionName {
+  ADMINISTRATOR
+  EDITOR
+}
+
 model User {
   id                     String          @id @default(auto()) @map("_id") @db.ObjectId
   firstName              String          @default("Anonymous")
@@ -27,10 +32,38 @@ model User {
   // Optional for WebAuthn support
   Authenticator          Authenticator[]
 
+  NewsletterSubscriber NewsletterSubscriber[]
+
+  rolesIDs String[] @db.ObjectId
+  roles    Role[]   @relation(fields: [rolesIDs], references: [id]) // Assign multiple roles to a user
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
 
-  NewsletterSubscriber NewsletterSubscriber[]
+model Role {
+  id             String       @id @default(auto()) @map("_id") @db.ObjectId
+  name           String       @unique // e.g., ADMINISTRATOR, EDITOR
+  permissions    Permission[] @relation(fields: [permissionsIDs], references: [id]) // Permissions for the role
+  permissionsIDs String[]     @db.ObjectId
+
+  usersIDs String[] @db.ObjectId
+  users    User[]   @relation(fields: [usersIDs], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Permission {
+  id          String         @id @default(auto()) @map("_id") @db.ObjectId
+  name        PermissionName @unique // e.g., CAN_COMMENT, CAN_DELETE_POSTS
+  description String?
+
+  rolesIDs String[] @db.ObjectId
+  roles    Role[]   @relation(fields: [rolesIDs], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Account {
@@ -86,6 +119,7 @@ model Post {
   authorId   String   @db.ObjectId
   createdAt  DateTime @default(now())
   category   Category @relation(fields: [categoryId], references: [id])
+  views      Int      @default(0)
   categoryId String   @db.ObjectId
 }
 

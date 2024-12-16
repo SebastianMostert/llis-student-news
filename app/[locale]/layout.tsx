@@ -6,6 +6,7 @@ import { getMessages } from 'next-intl/server';
 import { routing } from '@/i18n/routing';
 import { getTranslations } from "next-intl/server";
 import { Toaster } from 'sonner'
+import CookieConsentBanner from "@/components/CookieConsentBanner";
 
 export async function generateMetadata({ params }: { params: Promise<{ [key: string]: string | undefined }> }) {
 
@@ -57,6 +58,7 @@ export default async function LocaleLayout({
                         <NextIntlClientProvider messages={messages}>
                             <Toaster richColors position="bottom-right" />
                             <div>{children}</div>
+                            <CookieConsentBanner />
                         </NextIntlClientProvider>
                     </Providers>
                 </SessionProvider>
