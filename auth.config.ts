@@ -1,6 +1,7 @@
 import Google from "next-auth/providers/google";
 import Nodemailer from "next-auth/providers/nodemailer";
 import type { DefaultSession, NextAuthConfig } from "next-auth";
+import type { Provider } from "next-auth/providers"
 
 declare module "next-auth" {
     interface Session {
@@ -20,7 +21,6 @@ declare module "next-auth" {
 }
 
 import { JWT } from "next-auth/jwt";
-import { Role } from "@prisma/client";
 import { RolesWithPermissions } from "./types";
 
 declare module "next-auth/jwt" {
@@ -31,22 +31,35 @@ declare module "next-auth/jwt" {
     }
 }
 
-export default {
-    providers: [
-        Google,
-        Nodemailer({
-            server: {
-                service: "Gmail",
-                auth: {
-                    user: process.env.USER,
-                    pass: process.env.APP_PASSWORD,
-                },
-                tls: {
-                    rejectUnauthorized: false,
-                },
+const providers: Provider[] = [
+    Google,
+    Nodemailer({
+        server: {
+            service: "Gmail",
+            auth: {
+                user: process.env.USER,
+                pass: process.env.APP_PASSWORD,
             },
-        }),
-    ],
+            tls: {
+                rejectUnauthorized: false,
+            },
+        },
+    }),
+]
+
+export const providerMap = providers
+    .map((provider) => {
+        if (typeof provider === "function") {
+            const providerData = provider()
+            return { id: providerData.id, name: providerData.name, type: providerData.type }
+        } else {
+            return { id: provider.id, name: provider.name, type: provider.type }
+        }
+    })
+    .filter((provider) => provider.id !== "credentials")
+
+export default {
+    providers,
     callbacks: {
         async jwt({ token, account, profile }) {
             if (account && profile) {
@@ -89,5 +102,10 @@ export default {
         strategy: "jwt",
         maxAge: 30 * 60,
         updateAge: 5 * 60,
+    },
+    pages: {
+        signIn: "/signin",
+        error: "/error",
+        
     },
 } satisfies NextAuthConfig;
